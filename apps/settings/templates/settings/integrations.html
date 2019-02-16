@@ -1,0 +1,27 @@
+{% extends 'settings/settings.html' %}
+{% block settings %}
+{% load static %}
+
+<div class="col-lg-4">
+    <center>
+        <img src="{% static 'img/telegram.svg' %}" width="64" height="64" />
+        <h5>Telegram</h5>
+        <p>By connecting your telegram account to Bookie you can easily save images, links and text via the Bookie bot.</p>
+
+        {% if not telegram %}
+        <a href="{% url 'settings:integration_detail' 'telegram' %}" style="text-decoration: none;">
+            <button type="button" class="btn btn-light btn-sm btn-block"><strong>Connect now</strong></button>
+        </a>
+        {% else %}
+        <form action="{% url 'settings:integration_telegram_delete' %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Disconnect" class="btn btn-outline-danger btn-sm btn-block" />
+        </form>
+        {% endif %}
+
+    </center>
+
+</div>
+
+
+{% endblock %}

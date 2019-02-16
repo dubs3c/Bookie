@@ -1,0 +1,34 @@
+
+
+#sidebar li {
+    list-style: none;
+}
+
+.link-delete-button, .link-save-button {
+    color: #cbcbcb;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.link-delete-button:hover {
+    color: #f5495a;
+}
+
+.link-save-button:hover {
+    color: #23e16f;
+}
+
+.bookmark-read {
+    color: #23e16f;
+}
+
+.brand, .brand:hover {
+    color: inherit;
+    text-decoration: none;
+}
+
+.card2 {
+    border: 1px solid #d3dbe9;
+    border-radius: 10px;
+    box-shadow: 0 6px 9px 0 #e1e9f8;
+}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row">
+    <div class="col">
+        <div class="shadow-sm p-3 mb-5 bg-white rounded" id="sidebar">
+            <h5>Filter</h5>
+            <ul>
+                <li><a href="?filter=notread"><i class="fas fa-angle-right"></i> Not read</a></li>
+                <li><a href="?filter=read"><i class="fas fa-angle-right"></i> Read</a></li>
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="card-columns">
+            {% for bookmark in bookmarks %}
+                <div class="card mb-3" id="{{bookmark.id}}">
+                    <div class="card-body">
+                        {% if bookmark.image %}
+                        <div class="row">
+                            <div class="col">
+                                <img src="{{bookmark.image}}" style="max-width: 100%; margin-bottom: 15px" />
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="float-right">
+                            <form>
+                                {% csrf_token %}
+                                <span class="link-delete-button" title="Delete bookmark" onclick="delete_bookmark({{bookmark.id}})"><i class="fas fa-times"></i></span>
+                                {% if bookmark.read %}
+                                    <span class="link-save-button {% if bookmark.read %} bookmark-read {% endif %}"
+                                        title="Bookmark read" onclick="save_bookmark({{bookmark.id}})"><i class="fas fa-bookmark"></i></span>               
+                                {% else %}
+                                    <span class="link-save-button {% if bookmark.read %} bookmark-read {% endif %}" 
+                                        title=" Mark as read" onclick="save_bookmark({{bookmark.id}})"><i class="fas fa-bookmark"></i></span>
+                                {% endif %}
+                                
+                            </form>
+                        </div>
+
+                        {% if bookmark.title %}
+                            <h4 class="card-title"><a href="{{ bookmark.link }}" target="_blank">{{bookmark.title}}</a></h4>
+                        {% endif %}
+                        {% if bookmark.description %}
+                            <p class="card-text">{{bookmark.description}}</p>
+                            <p class="card-text"><small class="text-muted">{{bookmark.link}}</small></p>
+                        {% else %}
+                            <p class="card-text">{{bookmark.link}}</p>
+                        {% endif %}
+                        
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        {% if not bookmarks %}
+            <p><i>Nothing saved yet...</i></p>
+        {% endif %}
+    </div>
+</div>
+
+
+{% endblock %}

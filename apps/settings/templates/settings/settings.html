@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row">
+
+        <div class="col-lg-3">
+            <div class="shadow-sm p-3 mb-5 bg-white rounded" id="sidebar">
+                <h5> Settings</h5>
+                <ul>
+                    <li><a href="{% url 'settings:index' %}"><i class="fas fa-angle-right"></i> Account</a></li>
+                    <li><a href="{% url 'settings:integrations' %}"><i class="fas fa-angle-right"></i> Integrations</a></li>
+                    <li><a href="{% url 'settings:data_portability' %}"><i class="fas fa-angle-right"></i> Data Portability</a></li>
+                </ul>    
+            </div>
+        </div>
+
+        <div class="col">
+            {% block settings %} {% endblock %}
+        </div>
+</div>
+
+{% endblock %}

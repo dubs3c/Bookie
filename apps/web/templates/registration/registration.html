@@ -1,0 +1,61 @@
+{% extends 'base_login.html' %}
+{% block content %}
+
+<div class="row justify-content-md-center">
+        <div class="col-md-7">
+            <div class="card2">
+                <div class="card-body">
+                    <center><h1>Registration</h1></center>
+                    <hr />
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <ul>
+                                {% for field in form %}
+                                            {% for error in field.errors %}
+                                                    <li><strong>{{ error }}</strong></li>
+                                            {% endfor %}
+                                {% endfor %}
+                            </ul>
+                            {% if form.non_field_errors %}
+                                <ul>
+                                    {% for error in form.non_field_errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    <form action="{% url 'register' %}" method="POST">
+                            {% csrf_token %}
+
+                            <div class="form-group">
+                                    {{ form.username }}
+                                <small id="username-desc" class="form-text text-muted">{{ form.username.help_text }}</small>
+                            </div>
+
+                            <div class="form-group">
+                                {{ form.email }}
+                                <small id="email-desc" class="form-text text-muted">{{ form.email.help_text }}</small>
+                            </div>                        
+
+                            <div class="form-group">
+                                {{ form.password1 }}
+                                <small id="password1-desc" class="form-text text-muted">{{ form.password1.help_text }}</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                {{ form.password2 }}
+                                <small id="passowrd2-desc" class="form-text text-muted">{{ form.subject.errors }}</small>
+                            </div>
+                    
+                            <button type="submit" class="btn btn-primary">Register</button> <a href="{% url 'login' %}"><button type="submit" class="btn btn-outline-info">Cancel</button></a>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+</div>
+
+{% endblock %}

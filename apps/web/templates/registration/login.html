@@ -1,0 +1,44 @@
+{% extends 'base_login.html' %}
+{% block content %}
+
+    <div class="row justify-content-md-center">
+            <div class="col-md-7">
+                <div class="card2">
+                    <div class="card-body">
+                        <center><h1>Bookie Login</h1></center>
+                        <hr />
+
+                        {% if messages %}
+                            {% for message in messages %}
+                                {% if message.tags == 'success' %}
+                                    <div class="alert alert-{{message.tags}}" role="alert">
+                                        {{ message }}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+
+
+                        {% if error %}
+                            <div class="alert alert-danger" role="alert">
+                                    <center><strong>{{error}}</strong></center>
+                            </div>
+                        {% endif %}
+
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="usernameInput" aria-describedby="usernameHelp" placeholder="Username" name="username">
+                                <!--<small id="usernameHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>-->
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" id="passwordInput" placeholder="Password" name="password">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Login</button> <a href="{% url 'register' %}"><button type="button" class="btn btn-outline-info">Register</button></a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'settings/settings.html' %}
+{% block settings %}
+
+<h3>Account information</h3>
+
+<table class="table table-borderless">
+    <tbody>
+        <tr>
+            <th scope="row">Username:</th>
+            <td>{{ request.user.username }}</td>
+        </tr>
+        <tr>
+            <th scope="row">Email:</th>
+            <td>{{ request.user.email }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Change password</h3>
+<br />
+
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+            <div class="alert alert-{{message.tags}}" role="alert">
+                {{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% if form.errors %}
+    <div class="alert alert-danger">
+        {% for field in form %}
+                <ul>
+                    {% for error in field.errors %}
+                            <li><strong>{{ error }}</strong></li>
+                    {% endfor %}
+                </ul>
+        {% endfor %}
+        <ul>
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<form action="{% url 'settings:index' %}" method="post">
+    {% csrf_token %}
+
+
+        <div class="form-group">
+            {{ form.old_password }}
+            <small id="oldpassword-desc" class="form-text text-muted">{{ form.subject.errors }}</small>
+        </div>
+        
+        <div class="form-group">
+            {{ form.new_password1 }}
+            <small id="oldpassword-desc" class="form-text text-muted">{{ form.subject.errors }}</small>
+        </div>
+
+        <div class="form-group">
+            {{ form.new_password2 }}
+            <small id="oldpassword-desc" class="form-text text-muted">{{ form.subject.errors }}</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+
+
+</form>
+<br />
+<h3>Delete account</h3>
+<p>Deleting your account will remove everything Bookie has saved for you. This includes bookmarks, settings and integrations. If you want to save your bookmarks, export your data <a href="">here</a>.</p> 
+<p>Are you sure you want to delete your account? This can't be undone.</p>
+<button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModalCenter"><strong>Yes, delete my account</strong></button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenterTitle">Last chance...</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              Final chance, this action will permanently delete your account and bookmarks.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Abort</button>
+              <a href="{% url 'settings:delete_account' %}"><button type="button" class="btn btn-danger">Delete my account</button></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+{% endblock %}
