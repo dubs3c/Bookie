@@ -89,8 +89,11 @@
               Final chance, this action will permanently delete your account and bookmarks.
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Abort</button>
-              <a href="{% url 'settings:delete_account' %}"><button type="button" class="btn btn-danger">Delete my account</button></a>
+            <form action="{% url 'settings:delete_account' %}" method="POST">
+                {% csrf_token %}
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Abort</button>
+                <input type="submit" class="btn btn-danger" name="delete_account" value="Delete my account" />
+            </form>
             </div>
           </div>
         </div>

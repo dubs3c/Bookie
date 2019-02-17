@@ -110,7 +110,10 @@ def integration_telegram_delete(request):
 
 def delete_account(request):
     """ Delete your account """
-    user = request.user
-    User.objects.filter(pk=user.pk).delete()
-    messages.success(request, "Your account was successfully deleted")
-    return redirect(reverse("login"))
+    if request.method == "POST":
+        user = request.user
+        User.objects.filter(pk=user.pk).delete()
+        messages.success(request, "Your account was successfully deleted")
+        return redirect(reverse("login"))
+
+    return redirect(reverse("settings:index"))
