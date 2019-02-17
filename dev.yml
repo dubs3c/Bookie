@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  bookie:
+    container_name: bookie-dev
+    build: .
+    command: "python manage.py runserver 0.0.0.0:8000 --settings=bookie.env.dev"
+    ports:
+      - "0.0.0.0:8000:8000"
+    volumes:
+      - ".:/code"
+    environment:
+      - TELEGRAM_API_KEY=${TELEGRAM_API_KEY}

@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  bookie:
+    container_name: bookie-prod
+    build: .
+    command: bash -c "python manage.py migrate --settings=bookie.env.prod && python manage.py collectstatic --noinput --settings=bookie.env.prod && python manage.py runserver 0.0.0.0:8000 --settings=bookie.env.prod"
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ".:/code"
+    env_file:
+      - /root/bookie.env

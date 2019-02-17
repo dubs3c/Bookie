@@ -35,7 +35,13 @@ def telegram_api(request):
             return HttpResponse(status=400)
 
         if content.startswith("/register"):
-            token = content.split(" ")[1]
+            cmd = content.split(" ")
+
+            if len(cmd) == 1:
+                send_message(chat_id, "You forgot to enter your code...")
+                return HttpResponse(status=400)
+
+            token = cmd[1]
 
             token_exists = get_object_or_404(Telegram, token=token, activated=False)
 

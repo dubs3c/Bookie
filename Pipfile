@@ -8,6 +8,7 @@ django = "*"
 pillow = "*"
 requests = "*"
 lxml = "*"
+sentry-sdk = "==0.7.2"
 
 [dev-packages]
 pylint = "*"
