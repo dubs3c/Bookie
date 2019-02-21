@@ -5,3 +5,4 @@ db.sqlite3
 *.log
 __pycache__/
 .vagrant/
+fab_settings.py

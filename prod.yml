@@ -8,6 +8,6 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
     volumes:
-      - ".:/code"
+      - "./db.sqlite3:/home/bookie/project/db.sqlite3"
     env_file:
       - /root/bookie.env

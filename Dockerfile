@@ -1,6 +1,6 @@
 FROM python:3
 ENV PYTHONUNBUFFERED 1
-RUN useradd -ms /bin/bash bookie
+RUN useradd -ms /bin/bash bookie && pip install --upgrade pip
 USER bookie
 RUN mkdir /home/bookie/project
 WORKDIR /home/bookie/project
