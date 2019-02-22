@@ -42,12 +42,10 @@ def delete_bookmark(request):
     if request.method == "POST":
         data = request.POST
         user = request.user
-        bookmark_id = data["id"]
-        try:
-            bookmark = Bookmarks.objects.get(id=bookmark_id)
-        except Exception:
-            return HttpResponse(status=404)
-        
+        bookmark_id = data["bm_id"]
+
+        bookmark = get_object_or_404(Bookmarks, bm_id=bookmark_id)
+
         if bookmark.user == user:
             bookmark.delete()
             return HttpResponse(status=200)
@@ -61,9 +59,9 @@ def mark_read(request):
     if request.method == "POST":
         data = request.POST
         user = request.user
-        bookmark_id = data["id"]
+        bookmark_id = data["bm_id"]
 
-        bookmark = get_object_or_404(Bookmarks, id=bookmark_id)
+        bookmark = get_object_or_404(Bookmarks, bm_id=bookmark_id)
 
         if bookmark.user == user:
             if bookmark.read:

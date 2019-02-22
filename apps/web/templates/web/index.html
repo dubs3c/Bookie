@@ -18,7 +18,7 @@
     <div class="col">
         <div class="card-columns">
             {% for bookmark in bookmarks %}
-                <div class="card mb-3" id="{{bookmark.id}}">
+                <div class="card mb-3" id="{{bookmark.bm_id}}">
                     <div class="card-body">
                         {% if bookmark.image %}
                         <div class="row">
@@ -31,13 +31,13 @@
                         <div class="float-right">
                             <form>
                                 {% csrf_token %}
-                                <span class="link-delete-button" title="Delete bookmark" onclick="delete_bookmark({{bookmark.id}})"><i class="fas fa-times"></i></span>
+                                <span class="link-delete-button" title="Delete bookmark" onclick="delete_bookmark('{{bookmark.bm_id}}')"><i class="fas fa-times"></i></span>
                                 {% if bookmark.read %}
                                     <span class="link-save-button {% if bookmark.read %} bookmark-read {% endif %}"
-                                        title="Bookmark read" onclick="save_bookmark({{bookmark.id}})"><i class="fas fa-bookmark"></i></span>               
+                                        title="Bookmark read" onclick="save_bookmark('{{bookmark.bm_id}}')"><i class="fas fa-bookmark"></i></span>
                                 {% else %}
                                     <span class="link-save-button {% if bookmark.read %} bookmark-read {% endif %}" 
-                                        title=" Mark as read" onclick="save_bookmark({{bookmark.id}})"><i class="fas fa-bookmark"></i></span>
+                                        title=" Mark as read" onclick="save_bookmark('{{bookmark.bm_id}}')"><i class="fas fa-bookmark"></i></span>
                                 {% endif %}
                                 
                             </form>

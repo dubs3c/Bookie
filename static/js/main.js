@@ -2,15 +2,15 @@
 
 function delete_bookmark(bookmarkId) {
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
-    var data ={"id": bookmarkId, "csrfmiddlewaretoken": csrftoken};
+    var data ={"bm_id": bookmarkId, "csrfmiddlewaretoken": csrftoken};
     send_ajax(data, "/dashboard/delete_bookmark", function(){
-        $("#"+data["id"]).hide("slow", function(){ $(this).remove(); })
+        $("#"+data["bm_id"]).hide("slow", function(){ $(this).remove(); })
     });
 }
 
 function save_bookmark(bookmarkId) {
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
-    var data ={"id": bookmarkId, "csrfmiddlewaretoken": csrftoken};
+    var data ={"bm_id": bookmarkId, "csrfmiddlewaretoken": csrftoken};
     send_ajax(data, "/dashboard/mark_bookmark", function(){
         //$("#"+data["id"]).fadeOut("slow", function(){ $(this).remove(); })
         // Check if class already is set first
