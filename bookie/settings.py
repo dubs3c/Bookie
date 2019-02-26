@@ -15,15 +15,14 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-TELEGRAM_API_KEY = os.environ["TELEGRAM_API_KEY"]
-
-if not TELEGRAM_API_KEY:
-    print("TELEGRAM_API_KEY was not set, exiting...")
-    quit()
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            'format': '%(name)s:%(levelname)s %(asctime)s  %(message)s'
+        }
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
@@ -48,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.api',
     'apps.web',
-    'apps.settings'
+    'apps.settings',
 ]
 
 MIDDLEWARE = [

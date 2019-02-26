@@ -10,6 +10,7 @@ requests = "*"
 lxml = "*"
 sentry-sdk = "==0.7.2"
 fabric = "*"
+django-apscheduler = "*"
 
 [dev-packages]
 pylint = "*"

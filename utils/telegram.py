@@ -2,10 +2,10 @@
 
 import requests
 
-from bookie.settings import TELEGRAM_API_KEY
+from django.conf import settings
 
 BASE_URL = "https://api.telegram.org"
-TOKEN = TELEGRAM_API_KEY
+TOKEN = settings.TELEGRAM_API_KEY
 API = f"{BASE_URL}/bot{TOKEN}"
 SESSION = requests.Session()
 

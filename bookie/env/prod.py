@@ -8,11 +8,8 @@ from bookie.settings import *
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 ALLOWED_DOMAINS = os.environ["ALLOWED_DOMAINS"].split(",")
 
-try:
-    SENTRY_KEY = os.environ["SENTRY_KEY"]
-except KeyError:
-    SENTRY_KEY = ""
 
+SENTRY_KEY = os.environ.get("SENTRY_KEY", "")
 
 DEBUG = False
 DJANGO_LOG_LEVEL = DEBUG
@@ -21,6 +18,11 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'media')
 ALLOWED_HOSTS = ALLOWED_DOMAINS
 INTERNAL_IPS = ['127.0.0.1']
 
+TELEGRAM_API_KEY = os.environ.get("TELEGRAM_API_KEY")
+
+if not TELEGRAM_API_KEY:
+    print("TELEGRAM_API_KEY was not set, exiting...")
+    quit()
 
 if SENTRY_KEY:
     sentry_sdk.init(

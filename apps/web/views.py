@@ -42,7 +42,7 @@ def delete_bookmark(request):
     if request.method == "POST":
         data = request.POST
         user = request.user
-        bookmark_id = data["bm_id"]
+        bookmark_id = data.get("bm_id")
 
         bookmark = get_object_or_404(Bookmarks, bm_id=bookmark_id)
 
@@ -59,7 +59,7 @@ def mark_read(request):
     if request.method == "POST":
         data = request.POST
         user = request.user
-        bookmark_id = data["bm_id"]
+        bookmark_id = data.get("bm_id")
 
         bookmark = get_object_or_404(Bookmarks, bm_id=bookmark_id)
 
@@ -83,8 +83,13 @@ def user_login(request):
         return redirect(reverse("web:index"))
 
     if request.method == "POST":
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        if not username or not password:
+            data = {"error": "Please enter both username and password."}
+            return render(request, "registration/login.html", context=data)
+
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)

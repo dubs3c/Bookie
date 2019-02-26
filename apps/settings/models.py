@@ -4,7 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 
-# Create your models here.
+
 class Telegram(models.Model):
     """ Telegram usernames connected to bookie users """
     user = models.ForeignKey(User, on_delete=models.CASCADE)

@@ -2,11 +2,11 @@
 
 from django.urls import path
 
-from bookie.settings import TELEGRAM_API_KEY
+from django.conf import settings
 
 from . import views
 
-TELEGRAM_KEY = TELEGRAM_API_KEY.split(":")[1]
+TELEGRAM_KEY = settings.TELEGRAM_API_KEY.split(":")[1]
 
 app_name = "api"
 urlpatterns = [
