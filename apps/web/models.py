@@ -21,7 +21,7 @@ class Bookmarks(models.Model):
         if self.id is None:
             while True:
                 random = get_random_string(7)
-                if not Bookmarks.objects.get(bm_id=random).exists():
+                if not Bookmarks.objects.filter(bm_id=random).exists():
                     self.bm_id = random
                     return super().save(*args, **kwargs)
                 continue
