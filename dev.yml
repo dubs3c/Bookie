@@ -4,10 +4,57 @@ services:
   bookie:
     container_name: bookie-dev
     build: .
-    command: "python manage.py runserver 0.0.0.0:8000 --settings=bookie.env.dev"
+    command: bash -c "python manage.py makemigrations --settings=bookie.env.dev && python manage.py migrate --settings=bookie.env.dev && python manage.py runserver 0.0.0.0:8000 --settings=bookie.env.dev"
     ports:
       - "0.0.0.0:8000:8000"
     volumes:
-      - ".:/code"
+      - ".:/home/bookie/project/"
     environment:
       - TELEGRAM_API_KEY=${TELEGRAM_API_KEY}
+    depends_on:
+      - postgres
+      - redis
+
+  celery-worker:
+    build: .
+    command: python -m celery worker -A bookie --concurrency=10 --loglevel=DEBUG
+    environment:
+      - POSTGRES_USER=bookie
+      - POSTGRES_PASSWORD=asdf
+      - POSTGRES_DB=bookie
+    depends_on:
+      - redis
+      - postgres
+
+#  celery-flower:
+#    build: .
+#    command: python -m celery -A bookie flower
+#    ports:
+#      - "0.0.0.0:5555:5555"
+#    environment:
+#      - POSTGRES_USER=bookie
+#      - POSTGRES_PASSWORD=asdf
+#      - POSTGRES_DB=bookie
+#    depends_on:
+#      - redis
+
+  celery-beat:
+    build: .
+    command: python -m celery beat -A bookie --loglevel=DEBUG -S django
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - POSTGRES_USER=bookie
+      - POSTGRES_PASSWORD=asdf
+      - POSTGRES_DB=bookie
+
+  postgres:
+    image: postgres:11.2-alpine
+    environment:
+      - POSTGRES_USER=bookie
+      - POSTGRES_PASSWORD=asdf
+      - POSTGRES_DB=bookie
+  
+  redis:
+    image: redis:5.0.3-alpine

@@ -3,7 +3,9 @@ Contains all the setting views
 """
 
 from datetime import timedelta
+import json
 import logging
+import pytz
 
 from django.utils.crypto import get_random_string
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
@@ -17,8 +19,12 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.shortcuts import redirect
 
+from django_celery_beat.models import CrontabSchedule, PeriodicTask
+
 from .forms import ChangePasswordForm
 from .models import Telegram
+from apps.web.models import ScheduledTasks
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +33,20 @@ def settings(request):
 
     if request.method == "GET":
         form = ChangePasswordForm(user=request.user)
-
+        '''
+        schedule, _ = CrontabSchedule.objects.get_or_create(minute='2',
+                                                            hour='*',
+                                                            day_of_week='*',
+                                                            day_of_month='*',
+                                                            month_of_year='*',
+                                                            timezone=pytz.timezone(request.user.profile.timezone))
+        
+        ScheduledTasks.objects.create(crontab=schedule,
+                                        args=json.dumps([request.user.pk]),
+                                        name=f'Notify {request.user.email}',
+                                        task='notify',
+                                        user=request.user.profile)
+        '''
     if request.method == "POST":
         form = ChangePasswordForm(data=request.POST, user=request.user)
         if form.is_valid():

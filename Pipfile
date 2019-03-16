@@ -10,11 +10,16 @@ requests = "*"
 lxml = "*"
 sentry-sdk = "==0.7.2"
 fabric = "*"
-django-apscheduler = "*"
+celery = "*"
+django-celery-beat = "*"
+psycopg2 = "*"
+redis = "*"
+tornado = "<6.0.0"
 
 [dev-packages]
 pylint = "*"
 pylint-django = "*"
+flower = "*"
 
 [requires]
 python_version = "3.7"
