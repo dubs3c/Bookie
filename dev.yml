@@ -25,6 +25,8 @@ services:
     depends_on:
       - redis
       - postgres
+    volumes:
+      - ".:/home/bookie/project/"
 
 #  celery-flower:
 #    build: .
@@ -48,6 +50,8 @@ services:
       - POSTGRES_USER=bookie
       - POSTGRES_PASSWORD=asdf
       - POSTGRES_DB=bookie
+    volumes:
+      - ".:/home/bookie/project/"
 
   postgres:
     image: postgres:11.2-alpine

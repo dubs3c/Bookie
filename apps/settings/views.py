@@ -19,44 +19,59 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.shortcuts import redirect
 
-from django_celery_beat.models import CrontabSchedule, PeriodicTask
-
-from .forms import ChangePasswordForm
+from apps.web.models import CrontabScheduleUser
+from .forms import ChangePasswordForm, CronForm, ProfileForm
 from .models import Telegram
-from apps.web.models import ScheduledTasks
 
 
 LOGGER = logging.getLogger(__name__)
 
 def settings(request):
     """ Settings index page """
+    timezones = pytz.all_timezones
+    cron_obj = CrontabScheduleUser.objects.get(user=request.user)
+    cron_expression = f"{cron_obj.minute} {cron_obj.hour} {cron_obj.day_of_week} {cron_obj.day_of_month} {cron_obj.month_of_year}"
+    change_pw_form = ChangePasswordForm(user=request.user)
+    errors = []
 
     if request.method == "GET":
-        form = ChangePasswordForm(user=request.user)
-        '''
-        schedule, _ = CrontabSchedule.objects.get_or_create(minute='2',
-                                                            hour='*',
-                                                            day_of_week='*',
-                                                            day_of_month='*',
-                                                            month_of_year='*',
-                                                            timezone=pytz.timezone(request.user.profile.timezone))
-        
-        ScheduledTasks.objects.create(crontab=schedule,
-                                        args=json.dumps([request.user.pk]),
-                                        name=f'Notify {request.user.email}',
-                                        task='notify',
-                                        user=request.user.profile)
-        '''
+        profile_form = ProfileForm(user=request.user.profile, instance=request.user.profile)
+        cron_form = CronForm(user=request.user.profile)
+
+    if request.method == "POST":
+        profile_form = ProfileForm(data=request.POST, user=request.user.profile)
+        cron_form = CronForm(data=request.POST, user=request.user.profile)
+
+
+        if profile_form.is_valid():
+            print("profile is valid")
+            profile_form.save()
+        else:
+            errors.append(profile_form.error_messages)
+
+        if cron_form.is_valid():
+            print("cron is valid")
+            cron_form.save()
+        else:
+            errors.append(cron_form.error_messages)
+
+
+    return render(request, "settings/account.html",
+                  context={"change_pw_form": change_pw_form, "profile_form": profile_form,
+                           "cron_form": cron_form, "timezones": timezones,
+                           "cron_expression": cron_expression, "formerrors": errors})
+
+def change_password(request):
+    """ Change user password endpoint """
+
     if request.method == "POST":
         form = ChangePasswordForm(data=request.POST, user=request.user)
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
-            messages.success(request, "Your profile has been successfully updated")
-        else:
-            messages.error(request, "Form is invalid")
+            messages.success(request, "Your password has been successfully updated")
 
-    return render(request, "settings/account.html", context={"form": form})
+    return redirect(reverse("settings:index"))
 
 
 def integrations(request):

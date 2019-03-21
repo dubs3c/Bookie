@@ -1,17 +1,21 @@
 """ models """
 
+import pytz
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.crypto import get_random_string
 
-from django_celery_beat.models import PeriodicTask
+from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
 class Profile(User):
     """ lol """
+    timezones = [(tz, tz) for tz in pytz.all_timezones]
     user = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True)
-    timezone = models.CharField(max_length=50, default="UTC")
+    timezone = models.CharField(max_length=50, default="UTC", choices=timezones)
+    notifications_enabled = models.BooleanField(default=False)
 
     @receiver(post_save, sender=User)
     def create_or_update_user_profile(sender, instance, created, **kwargs):
@@ -47,4 +51,9 @@ class Bookmarks(models.Model):
 class ScheduledTasks(PeriodicTask):
     """ Adds additional information regarding scheduled tasks """
     periodic = models.OneToOneField(PeriodicTask, on_delete=models.CASCADE, parent_link=True)
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+
+class CrontabScheduleUser(CrontabSchedule):
+    """ CrontabSchedule user """
+    crontab = models.OneToOneField(CrontabSchedule, on_delete=models.CASCADE, parent_link=True)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
