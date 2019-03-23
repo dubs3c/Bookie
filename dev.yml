@@ -28,18 +28,6 @@ services:
     volumes:
       - ".:/home/bookie/project/"
 
-#  celery-flower:
-#    build: .
-#    command: python -m celery -A bookie flower
-#    ports:
-#      - "0.0.0.0:5555:5555"
-#    environment:
-#      - POSTGRES_USER=bookie
-#      - POSTGRES_PASSWORD=asdf
-#      - POSTGRES_DB=bookie
-#    depends_on:
-#      - redis
-
   celery-beat:
     build: .
     command: python -m celery beat -A bookie --loglevel=DEBUG -S django

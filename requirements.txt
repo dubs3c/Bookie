@@ -28,6 +28,7 @@ mccabe==0.6.1
 paramiko==2.4.2
 Pillow==5.4.1
 psycopg2==2.7.7
+psycopg2-binary==2.7.7
 pyasn1==0.4.5
 pycparser==2.19
 pylint==2.3.1
