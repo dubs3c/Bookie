@@ -15,7 +15,7 @@ def notify(self, user_id: int):
         user = User.objects.get(id=user_id)
         bookmarks = Bookmarks.objects.filter(user=user, read=False).order_by("-created")[:5]
         msg_html = render_to_string('email/email.html', {'bookmarks': bookmarks})
-        sent = send_mail(
+        send_mail(
             'Bookie - You have bookmarks to checkout!',
             "message",
             'bookie@dubell.io',
@@ -23,7 +23,5 @@ def notify(self, user_id: int):
             fail_silently=False,
             html_message=msg_html
         )
-        if sent == 0:
-            print("EMAIL FAILED")
     except Exception as exc:
         raise self.retry(exc=exc)

@@ -5,11 +5,11 @@ from bookie.settings import *
 DEBUG = True
 DJANGO_LOG_LEVEL = DEBUG
 
-EMAIL_HOST = "smtp.mailgun.org"
-EMAIL_PORT = "465"
-EMAIL_SENDER = "bookie@dubell.io"
-EMAIL_HOST_USER = "postmaster@mg.dubell.io"
-EMAIL_HOST_PASSWORD = "894f4b2c46d37ad4eb270cd9cb322dc9"
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+EMAIL_PORT = os.environ.get("EMAIL_PORT")
+EMAIL_SENDER = os.environ.get("EMAIL_SENDER")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
 EMAIL_USE_SSL = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
