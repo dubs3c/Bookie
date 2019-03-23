@@ -1,75 +1,118 @@
 {% extends 'settings/settings.html' %}
 {% block settings %}
 
-<h3>Account information</h3>
-
-<table class="table table-borderless">
-    <tbody>
-        <tr>
-            <th scope="row">Username:</th>
-            <td>{{ request.user.username }}</td>
-        </tr>
-        <tr>
-            <th scope="row">Email:</th>
-            <td>{{ request.user.email }}</td>
-        </tr>
-    </tbody>
-</table>
-
-<h3>Change password</h3>
-<br />
-
 {% if messages %}
     {% for message in messages %}
-        {% if message.tags == 'success' %}
-            <div class="alert alert-{{message.tags}}" role="alert">
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{message.tags}}{% endif %}" role="alert">
                 {{ message }}
             </div>
-        {% endif %}
     {% endfor %}
 {% endif %}
 
-{% if form.errors %}
+{% if formerrors %}
     <div class="alert alert-danger">
-        {% for field in form %}
-                <ul>
-                    {% for error in field.errors %}
-                            <li><strong>{{ error }}</strong></li>
-                    {% endfor %}
-                </ul>
+    {% for form in formerrors %}
+        {% for field, error in form.items %}
+            {{ error }}
         {% endfor %}
-        <ul>
-            {% for error in form.non_field_errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
+    {% endfor %}
     </div>
 {% endif %}
 
+<h3>Account information</h3>
+
 <form action="{% url 'settings:index' %}" method="post">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-3"><p><strong>Username:</strong></p></div>
+            <div class="col-md-3"><p>{{ request.user.username }}</p></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3"><p><strong>Email:</strong></p></div>
+            <div class="col-md-3"><p>{{ request.user.email }}</p></div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3"><p><strong>{{profile_form.timezone.label}}:</strong></p></div>
+            <div class="col-md-3">
+                {{profile_form.timezone}}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-3"><p><strong>{{profile_form.notifications_enabled.label}}:</strong></p></div>
+            <div class="col-md-3">{{profile_form.notifications_enabled}}</div>
+            <smal>{{profile_form.errors}}</smal>
+        </div>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('#selector').jqCron({
+                    enabled_minute: false,
+                    enabled_hour: false,
+                    multiple_dom: false,
+                    multiple_month: false,
+                    multiple_dow: false,
+                    multiple_time_minutes: false,
+                    default_period: 'week',
+                    default_value: '{% if cron_expression %} {{cron_expression}} {% else %}0 18 * * 4{% endif %}',
+                    no_reset_button: false,
+                    numeric_zero_pad: true,
+                    no_reset_button: true,
+                    lang: 'en',
+                    bind_to: $('#id_cron'),
+                    bind_method: {
+                        set: function($element, value) {
+                            $element.val(value);
+                        }
+                    }
+                }); // apply cron with default options
+            });
+        </script>
+
+        <h5>Notifications</h5>
+        <p>You have the option to let Bookie send you an email with a list of bookmarks which you have yet to mark as read. You can control how often you want Bookie to remind you below.</p>
+
+        <div id="selector"></div>
+        {{cron_form.cron}}
+        <br />
+
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+    
+<br />
+<hr />
+<br />
+
+<h4>Change password</h3>
+<br />
+
+<form action="{% url 'settings:change_password' %}" method="post">
     {% csrf_token %}
 
+    <div class="form-group">
+        {{ change_pw_form.old_password }}
+        <small id="oldpassword-desc" class="form-text text-muted">{{ change_pw_form.subject.errors }}</small>
+    </div>
+    
+    <div class="form-group">
+        {{ change_pw_form.new_password1 }}
+        <small id="oldpassword-desc" class="form-text text-muted">{{ change_pw_form.subject.errors }}</small>
+    </div>
 
-        <div class="form-group">
-            {{ form.old_password }}
-            <small id="oldpassword-desc" class="form-text text-muted">{{ form.subject.errors }}</small>
-        </div>
-        
-        <div class="form-group">
-            {{ form.new_password1 }}
-            <small id="oldpassword-desc" class="form-text text-muted">{{ form.subject.errors }}</small>
-        </div>
+    <div class="form-group">
+        {{ change_pw_form.new_password2 }}
+        <small id="oldpassword-desc" class="form-text text-muted">{{ change_pw_form.subject.errors }}</small>
+    </div>
 
-        <div class="form-group">
-            {{ form.new_password2 }}
-            <small id="oldpassword-desc" class="form-text text-muted">{{ form.subject.errors }}</small>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
-
-
+    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
+
 <br />
+<hr />
+<br />
+
 <h3>Delete account</h3>
 <p>Deleting your account will remove everything Bookie has saved for you. This includes bookmarks, settings and integrations. If you want to save your bookmarks, export your data <a href="">here</a>.</p> 
 <p>Are you sure you want to delete your account? This can't be undone.</p>
@@ -77,26 +120,26 @@
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalCenterTitle">Last chance...</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              Final chance, this action will permanently delete your account and bookmarks.
-            </div>
-            <div class="modal-footer">
-            <form action="{% url 'settings:delete_account' %}" method="POST">
-                {% csrf_token %}
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Abort</button>
-                <input type="submit" class="btn btn-danger" name="delete_account" value="Delete my account" />
-            </form>
-            </div>
-          </div>
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">Last chance...</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-      </div>
+        <div class="modal-body">
+            Final chance, this action will permanently delete your account and bookmarks.
+        </div>
+        <div class="modal-footer">
+        <form action="{% url 'settings:delete_account' %}" method="POST">
+            {% csrf_token %}
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Abort</button>
+            <input type="submit" class="btn btn-danger" name="delete_account" value="Delete my account" />
+        </form>
+        </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

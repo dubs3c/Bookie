@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <script src="{%static 'js/jquery-3.3.1.min.js'%}" type="text/javaScript"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'js/cron/jqcron.css' %}">
     <title>Bookie - Bookmark All The Things!</title>
   </head>
   <body class="{{ body_class }}">
@@ -17,7 +19,7 @@
     <div class="container">
         <div class="row">
             <div class="col">
-                <a href="{% url 'web:index' %}" class="brand"><h2>Bookie!</h2></a>
+                <a href="{% url 'web:dashboard' %}" class="brand"><h2>Bookie!</h2></a>
             </div>
         
             <div class="col">
@@ -42,11 +44,10 @@
 
     </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="{%static 'js/jquery-3.3.1.min.js'%}" type="text/javaScript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <script src="{% static 'js/main.js' %}" type="text/javaScript"></script>
+    <script src="{% static 'js/cron/jqcron.js' %}" type="text/javaScript"></script>
+    <script src="{% static 'js/cron/jqcron.en.js' %}" type="text/javaScript"></script>
   </body>
 </html>

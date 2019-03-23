@@ -8,6 +8,7 @@ app_name = "settings"
 urlpatterns = [
     path("", views.settings, name="index"),
     path("delete_account", views.delete_account, name="delete_account"),
+    path("change_password", views.change_password, name="change_password"),
     path("integrations", views.integrations, name="integrations"),
     path("portability", views.data_portability, name="data_portability"),
     path("integrations/<str:integration>", views.integration_detail, name="integration_detail"),

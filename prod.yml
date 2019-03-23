@@ -11,3 +11,39 @@ services:
       - ".:/home/bookie/project/"
     env_file:
       - /root/bookie.env
+      - /root/bookie.db.env
+    depends_on:
+      - postgres
+      - redis
+
+  celery-worker:
+    build: .
+    command: python -m celery worker -A bookie --concurrency=10
+    env_file:
+      - /root/bookie.env
+      - /root/bookie.db.env
+    depends_on:
+      - redis
+      - postgres
+    volumes:
+      - ".:/home/bookie/project/"
+
+  celery-beat:
+    build: .
+    command: python -m celery beat -A bookie -S django
+    depends_on:
+      - postgres
+      - redis
+    env_file:
+      - /root/bookie.env
+      - /root/bookie.db.env
+    volumes:
+      - ".:/home/bookie/project/"
+
+  postgres:
+    image: postgres:11.2-alpine
+    env_file:
+      - /root/bookie.db.env
+
+  redis:
+    image: redis:5.0.3-alpine

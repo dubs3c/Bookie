@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.api',
     'apps.web',
     'apps.settings',
+    'django_celery_beat'
 ]
 
 MIDDLEWARE = [
@@ -84,14 +85,14 @@ WSGI_APPLICATION = 'bookie.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -111,13 +112,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Celery config
+#CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379/0'
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_PERSISTENT = False
+CELERY_TRACK_STARTED = True
+CELERY_ACKS_LATE = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Stockholm'
 
 USE_I18N = True
 

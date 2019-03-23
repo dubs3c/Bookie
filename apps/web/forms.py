@@ -1,11 +1,12 @@
 """ forms """
 
-from django.contrib.auth.models import User
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import validate_email, RegexValidator
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+
+from .models import Profile
 
 class RegistrationForm(UserCreationForm):
     """ User password change form """
@@ -51,14 +52,14 @@ class RegistrationForm(UserCreationForm):
     )
 
     class Meta:
-        model = User
+        model = Profile
         fields = ('username', 'email', 'password1', 'password2', )
 
 
     def clean_email(self):
         """ Check if email exists """
         email = self.cleaned_data["email"]
-        if not User.objects.filter(email=email).exists():
+        if not Profile.objects.filter(email=email).exists():
             return email
 
         raise ValidationError(_('Email address already exists.'))

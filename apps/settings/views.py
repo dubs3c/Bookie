@@ -3,7 +3,9 @@ Contains all the setting views
 """
 
 from datetime import timedelta
+import json
 import logging
+import pytz
 
 from django.utils.crypto import get_random_string
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
@@ -17,27 +19,56 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.shortcuts import redirect
 
-from .forms import ChangePasswordForm
+from apps.web.models import CrontabScheduleUser
+from .forms import ChangePasswordForm, CronForm, ProfileForm
 from .models import Telegram
+
 
 LOGGER = logging.getLogger(__name__)
 
 def settings(request):
     """ Settings index page """
+    timezones = pytz.all_timezones
+    cron_obj = CrontabScheduleUser.objects.get(user=request.user)
+    cron_expression = f"{cron_obj.minute} {cron_obj.hour} {cron_obj.day_of_week} \
+        {cron_obj.day_of_month} {cron_obj.month_of_year}"
+    change_pw_form = ChangePasswordForm(user=request.user)
+    errors = []
 
     if request.method == "GET":
-        form = ChangePasswordForm(user=request.user)
+        profile_form = ProfileForm(user=request.user.profile, instance=request.user.profile)
+        cron_form = CronForm(user=request.user.profile)
+
+    if request.method == "POST":
+        profile_form = ProfileForm(data=request.POST, user=request.user.profile)
+        cron_form = CronForm(data=request.POST, user=request.user.profile)
+
+
+        if profile_form.is_valid() and cron_form.is_valid():
+            cron_form.save()
+            profile_form.save()
+            messages.success(request, "Your profile has been successfully updated")
+        else:
+            errors.append(profile_form.errors)
+            errors.append(cron_form.errors)
+
+
+    return render(request, "settings/account.html",
+                  context={"change_pw_form": change_pw_form, "profile_form": profile_form,
+                           "cron_form": cron_form, "timezones": timezones,
+                           "cron_expression": cron_expression, "formerrors": errors})
+
+def change_password(request):
+    """ Change user password endpoint """
 
     if request.method == "POST":
         form = ChangePasswordForm(data=request.POST, user=request.user)
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
-            messages.success(request, "Your profile has been successfully updated")
-        else:
-            messages.error(request, "Form is invalid")
+            messages.success(request, "Your password has been successfully updated")
 
-    return render(request, "settings/account.html", context={"form": form})
+    return redirect(reverse("settings:index"))
 
 
 def integrations(request):

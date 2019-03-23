@@ -1,9 +1,18 @@
 """ forms """
 
-from django.contrib.auth.models import User
+import json
+import re
+import pytz
+
 from django import forms
-from django.contrib.auth.forms import PasswordChangeForm
-from django.utils.translation import gettext, gettext_lazy as _
+from django.core.exceptions import ObjectDoesNotExist
+from django.forms import ModelForm
+from django.utils.translation import gettext_lazy as _
+
+from django_celery_beat.models import PeriodicTasks
+
+from apps.web.models import CrontabScheduleUser, ScheduledTasks
+from apps.web.models import Profile
 
 class ChangePasswordForm(forms.Form):
     """ User password change form """
@@ -78,3 +87,125 @@ class ChangePasswordForm(forms.Form):
             if commit:
                 self.user.save()
         return self.user
+
+
+class ProfileForm(ModelForm):
+    """ Profile form """
+
+    error_messages = {
+        'incorrect_timezone': ("The timezone you selected is incorrect.")
+    }
+
+    class Meta:
+        model = Profile
+        fields = ["timezone", "notifications_enabled"]
+        widgets = {
+            'timezone': forms.Select(attrs={'class':'custom-select custom-select-sm'})
+        }
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_timezone(self):
+        """ Validate timezone """
+        timezone = self.cleaned_data.get("timezone")
+        if timezone not in pytz.all_timezones:
+            raise forms.ValidationError(
+                self.error_messages["incorrect_timezone"],
+                code="incorrect_timezone"
+            )
+        return timezone
+
+    def save(self, commit=True):
+        """ save """
+        enabled = self.cleaned_data.get("notifications_enabled")
+        timezone = self.cleaned_data.get("timezone")
+        try:
+            scheduled_task = ScheduledTasks.objects.get(user=self.user)
+            scheduled_task.enabled = enabled
+            scheduled_task.save()
+
+            CrontabScheduleUser.objects.filter(user=self.user).update(timezone=timezone)
+        except ObjectDoesNotExist:
+            pass
+        finally:
+            Profile.objects.filter(user=self.user).update(
+                notifications_enabled=enabled,
+                timezone=timezone)
+
+        return enabled
+
+
+class CronForm(forms.Form):
+    """ Construct the form for cron expressions """
+
+    cron = forms.CharField(max_length=13, label="Cron", widget=forms.HiddenInput())
+
+    error_messages = {
+        'incorrect_length': ("The cron expression is to damn long!"),
+        'incorrect_pattern': ("The cron expression is wrong")
+    }
+
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def clean_cron(self):
+        """ Validate the cron expression """
+
+        cron = self.cleaned_data.get("cron")
+        print(cron)
+        regex = re.compile(
+            "[0-9]{1,2}\s[0-9]{1,2}\s(?:[0-9]{1,2}|[*])\s(?:[0-9]{1,2}|[*])\s(?:[0-9]{1,2}|[*])")
+
+        if len(cron.split(" ")) > 5:
+            raise forms.ValidationError(
+                self.error_messages["incorrect_length"],
+                code="incorrect_length")
+
+        if re.match(regex, cron) is None:
+            raise forms.ValidationError(
+                self.error_messages["incorrect_pattern"],
+                code="incorrect_pattern")
+
+        return cron
+
+    def save(self, commit=True):
+        """ Save the new password for the user """
+        cron = self.cleaned_data.get('cron')
+        if cron:
+            cron_list = cron.split(" ")
+
+            updated = CrontabScheduleUser.objects.filter(user=self.user).update(
+                minute=cron_list[0],
+                hour=cron_list[1],
+                day_of_week=cron_list[2],
+                day_of_month=cron_list[3],
+                month_of_year=cron_list[4],
+                timezone=pytz.timezone(self.user.profile.timezone),
+                user=self.user)
+
+            if updated == 0:
+                user_crontab = CrontabScheduleUser.objects.create(minute=cron_list[0],
+                                                                  hour=cron_list[1],
+                                                                  day_of_week=cron_list[2],
+                                                                  day_of_month=cron_list[3],
+                                                                  month_of_year=cron_list[4],
+                                                                  timezone=pytz.timezone(
+                                                                      self.user.profile.timezone
+                                                                      ),
+                                                                  user=self.user)
+
+                if self.user.profile.notifications_enabled:
+                    obj = ScheduledTasks.objects.create(
+                        crontab=user_crontab,
+                        args=json.dumps([self.user.pk]),
+                        name=f'Notify {self.user.email}',
+                        task='notify',
+                        user=self.user.profile)
+            else:
+                obj = ScheduledTasks.objects.get(user=self.user)
+                PeriodicTasks.changed(obj)
+
+        return cron

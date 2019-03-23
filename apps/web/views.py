@@ -18,6 +18,14 @@ from .models import Bookmarks
 LOGGER = logging.getLogger(__name__)
 
 def index(request):
+    """ index page """
+    if request.user.is_authenticated:
+        return redirect(reverse("web:dashboard"))
+
+    return redirect(reverse("login"))
+
+
+def dashboard(request):
     """ Dashboard page """
     query_param = request.GET.get("filter")
     if query_param:
@@ -80,7 +88,7 @@ def user_login(request):
     """ Login user """
 
     if request.user.is_authenticated:
-        return redirect(reverse("web:index"))
+        return redirect(reverse("web:dashboard"))
 
     if request.method == "POST":
         username = request.POST.get("username")
@@ -93,7 +101,7 @@ def user_login(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect(reverse("web:index"))
+            return redirect(reverse("web:dashboard"))
         else:
             data = {"error": "Wrong username/password"}
             return render(request, "registration/login.html", context=data)
@@ -109,7 +117,7 @@ def user_logout(request):
 def register(request):
     """ Register a new user """
     if request.user.is_authenticated:
-        return redirect(reverse("web:index"))
+        return redirect(reverse("web:dashboard"))
 
     if request.method == "POST":
         form = RegistrationForm(data=request.POST)
