@@ -3,7 +3,6 @@ Contains all the setting views
 """
 
 from datetime import timedelta
-import json
 import logging
 import pytz
 
@@ -16,6 +15,7 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from django.shortcuts import redirect
 
@@ -28,10 +28,14 @@ LOGGER = logging.getLogger(__name__)
 
 def settings(request):
     """ Settings index page """
+    try:
+        cron_obj = CrontabScheduleUser.objects.get(user=request.user)
+        cron_expression = f"{cron_obj.minute} {cron_obj.hour} {cron_obj.day_of_week} \
+            {cron_obj.day_of_month} {cron_obj.month_of_year}"
+    except ObjectDoesNotExist:
+        cron_expression = ""
+
     timezones = pytz.all_timezones
-    cron_obj = CrontabScheduleUser.objects.get(user=request.user)
-    cron_expression = f"{cron_obj.minute} {cron_obj.hour} {cron_obj.day_of_week} \
-        {cron_obj.day_of_month} {cron_obj.month_of_year}"
     change_pw_form = ChangePasswordForm(user=request.user)
     errors = []
 
