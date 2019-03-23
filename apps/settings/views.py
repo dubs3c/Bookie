@@ -30,7 +30,8 @@ def settings(request):
     """ Settings index page """
     timezones = pytz.all_timezones
     cron_obj = CrontabScheduleUser.objects.get(user=request.user)
-    cron_expression = f"{cron_obj.minute} {cron_obj.hour} {cron_obj.day_of_week} {cron_obj.day_of_month} {cron_obj.month_of_year}"
+    cron_expression = f"{cron_obj.minute} {cron_obj.hour} {cron_obj.day_of_week} \
+        {cron_obj.day_of_month} {cron_obj.month_of_year}"
     change_pw_form = ChangePasswordForm(user=request.user)
     errors = []
 
@@ -43,17 +44,13 @@ def settings(request):
         cron_form = CronForm(data=request.POST, user=request.user.profile)
 
 
-        if profile_form.is_valid():
-            print("profile is valid")
-            profile_form.save()
-        else:
-            errors.append(profile_form.error_messages)
-
-        if cron_form.is_valid():
-            print("cron is valid")
+        if profile_form.is_valid() and cron_form.is_valid():
             cron_form.save()
+            profile_form.save()
+            messages.success(request, "Your profile has been successfully updated")
         else:
-            errors.append(cron_form.error_messages)
+            errors.append(profile_form.errors)
+            errors.append(cron_form.errors)
 
 
     return render(request, "settings/account.html",

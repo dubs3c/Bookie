@@ -140,7 +140,7 @@ class ProfileForm(ModelForm):
 class CronForm(forms.Form):
     """ Construct the form for cron expressions """
 
-    cron = forms.CharField(max_length=13, widget=forms.HiddenInput())
+    cron = forms.CharField(max_length=13, label="Cron", widget=forms.HiddenInput())
 
     error_messages = {
         'incorrect_length': ("The cron expression is to damn long!"),

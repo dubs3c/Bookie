@@ -10,22 +10,13 @@
 {% endif %}
 
 {% if formerrors %}
+    <div class="alert alert-danger">
     {% for form in formerrors %}
-        <div class="alert alert-danger">
-            {% for field in form %}
-                    <ul>
-                        {% for error in field.errors %}
-                                <li><strong>{{ error }}</strong></li>
-                        {% endfor %}
-                    </ul>
-            {% endfor %}
-            <ul>
-                {% for error in form.non_field_errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-        </div>
+        {% for field, error in form.items %}
+            {{ error }}
+        {% endfor %}
     {% endfor %}
+    </div>
 {% endif %}
 
 <h3>Account information</h3>
