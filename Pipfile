@@ -15,7 +15,7 @@ django-celery-beat = "*"
 psycopg2 = "*"
 redis = "*"
 tornado = "<6.0.0"
-pyyaml = "*"
+pyyaml = "==5.1"
 
 [dev-packages]
 pylint = "*"
