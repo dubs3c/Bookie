@@ -11,7 +11,7 @@ from django.utils.crypto import get_random_string
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 
 class Profile(User):
-    """ lol """
+    """ Extended user model """
     timezones = [(tz, tz) for tz in pytz.all_timezones]
     user = models.OneToOneField(User, on_delete=models.CASCADE, parent_link=True)
     timezone = models.CharField(max_length=50, default="UTC", choices=timezones)

@@ -18,7 +18,7 @@ services:
 
   celery-worker:
     build: .
-    command: python -m celery worker -A bookie --concurrency=10
+    command: python -m celery worker -A bookie --concurrency=10 --loglevel=INFO
     env_file:
       - /root/bookie.env
       - /root/bookie.db.env
@@ -30,7 +30,7 @@ services:
 
   celery-beat:
     build: .
-    command: python -m celery beat -A bookie -S django
+    command: python -m celery beat -A bookie -S django --loglevel=INFO
     depends_on:
       - postgres
       - redis
