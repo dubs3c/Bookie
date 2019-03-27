@@ -39,7 +39,7 @@ def telegram_api(request):
 
             if len(cmd) == 1:
                 send_message(chat_id, "You forgot to enter your code...")
-                return HttpResponse(status=400)
+                return HttpResponse(status=200)
 
             token = cmd[1]
 
@@ -61,7 +61,7 @@ def telegram_api(request):
                     LOGGER.error(f"Could send message to telegram user, status code: {msg}")
                 LOGGER.info(f"User \"{token_exists.user.username}\" failed telegram integration, \
                             token expired")
-                return HttpResponse(status=404)
+                return HttpResponse(status=200)
 
         telegram = get_object_or_404(Telegram, telegram_username=telegram_username)
 
@@ -75,5 +75,6 @@ def telegram_api(request):
             Bookmarks.objects.create(user=telegram.user, link=content)
 
         return HttpResponse(status="201")
+
     if request.method == "GET":
         return HttpResponse("yer a wizard, harry", content_type="text/plain")

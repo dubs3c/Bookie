@@ -17,6 +17,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
+from django.utils import timezone
 from django.shortcuts import redirect
 
 from apps.web.models import CrontabScheduleUser
@@ -111,13 +112,13 @@ def integration_telegram(request):
 
     if request.method == "POST":
         user = request.user
-        telegram_username = request.POST["telegram_username"]
+        telegram_username = request.POST.get("telegram_username")
         if not telegram_username:
             return HttpResponse(status=404)
         telegram = Telegram.objects.filter(user=user)
         if telegram.count() == 1:
             obj = telegram[0]
-            if obj.created < (obj.created + timedelta(minutes=3)):
+            if timezone.now() < (obj.created + timedelta(minutes=3)):
                 token = {"token": obj.token}
                 return JsonResponse(token)
             else:
