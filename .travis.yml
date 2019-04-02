@@ -1,3 +1,11 @@
 language: python
-install: pip install -r requirements.txt
-script: python manage.py test --settings=bookie.env.test
+
+python:
+  - "3.6"
+  - "3.7"
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - python manage.py test --settings=bookie.env.test
