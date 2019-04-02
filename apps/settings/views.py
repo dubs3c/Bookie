@@ -48,15 +48,16 @@ def settings(request):
         profile_form = ProfileForm(data=request.POST, user=request.user.profile)
         cron_form = CronForm(data=request.POST, user=request.user.profile)
 
-
-        if profile_form.is_valid() and cron_form.is_valid():
-            cron_form.save()
+        if profile_form.is_valid():
             profile_form.save()
             messages.success(request, "Your profile has been successfully updated")
         else:
             errors.append(profile_form.errors)
-            errors.append(cron_form.errors)
 
+        if cron_form.is_valid():
+            cron_form.save()
+        else:
+            errors.append(cron_form.errors)
 
     return render(request, "settings/account.html",
                   context={"change_pw_form": change_pw_form, "profile_form": profile_form,
@@ -65,15 +66,17 @@ def settings(request):
 
 def change_password(request):
     """ Change user password endpoint """
-
+    errors = []
     if request.method == "POST":
         form = ChangePasswordForm(data=request.POST, user=request.user)
         if form.is_valid():
             form.save()
             update_session_auth_hash(request, form.user)
             messages.success(request, "Your password has been successfully updated")
+        else:
+            errors.append(form.errors)
 
-    return redirect(reverse("settings:index"))
+    return render(request, "settings/account.html", context={"formerrors": errors})
 
 
 def integrations(request):

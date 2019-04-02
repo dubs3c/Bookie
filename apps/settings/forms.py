@@ -60,13 +60,12 @@ class ChangePasswordForm(forms.Form):
     def clean_old_password(self):
         """ Validates that the old_password field is correct. """
         old_password = self.cleaned_data["old_password"]
-        if old_password:
-            if not self.user.check_password(old_password):
-                raise forms.ValidationError(
-                    self.error_messages['password_incorrect'],
-                    code='password_incorrect',
-                )
-            return old_password
+        if not self.user.check_password(old_password):
+            raise forms.ValidationError(
+                self.error_messages['password_incorrect'],
+                code='password_incorrect',
+            )
+        return old_password
 
     def clean_new_password2(self):
         """ Validate that the new passwords match """
@@ -93,7 +92,8 @@ class ProfileForm(ModelForm):
     """ Profile form """
 
     error_messages = {
-        'incorrect_timezone': ("The timezone you selected is incorrect.")
+        'incorrect_timezone': ("The timezone you selected is incorrect."),
+        'incorrect_notification_type': ("Notification enabled should be true or false.")
     }
 
     class Meta:
@@ -116,6 +116,16 @@ class ProfileForm(ModelForm):
                 code="incorrect_timezone"
             )
         return timezone
+
+    def clean_notifications_enabled(self):
+        """ Validate notifications_enabled """
+        enabled = self.cleaned_data.get("notifications_enabled")
+        if type(enabled) is not bool:
+            raise forms.ValidationError(
+                self.error_messages["incorrect_notification_type"],
+                code="incorrect_notification_type"
+            )
+        return enabled
 
     def save(self, commit=True):
         """ save """
@@ -155,7 +165,7 @@ class CronForm(forms.Form):
         """ Validate the cron expression """
 
         cron = self.cleaned_data.get("cron")
-        print(cron)
+        # TODO - Improve regex to make sure cron expression is correct
         regex = re.compile(
             "[0-9]{1,2}\s[0-9]{1,2}\s(?:[0-9]{1,2}|[*])\s(?:[0-9]{1,2}|[*])\s(?:[0-9]{1,2}|[*])")
 
