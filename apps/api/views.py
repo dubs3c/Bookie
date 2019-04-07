@@ -4,10 +4,12 @@ from datetime import timedelta
 import logging
 import json
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 
 from apps.settings.models import Telegram
 from apps.web.models import Bookmarks
@@ -34,18 +36,33 @@ def telegram_api(request):
             LOGGER.error(error)
             return HttpResponse(status=400)
 
+
         if content.startswith("/register"):
-            cmd = content.split(" ")
+            cmd = content.strip().split(" ")
 
             if len(cmd) == 1:
                 send_message(chat_id, "You forgot to enter your code...")
                 return HttpResponse(status=200)
 
+            if len(cmd) > 2:
+                send_message(chat_id, "Please register with this format: /register token, where token is your token from Bookie")
+                return HttpResponse(status=200)
+
             token = cmd[1]
 
-            token_exists = get_object_or_404(Telegram, token=token, activated=False)
+            try:
+                token_exists = Telegram.objects.get(token=token)
 
-            if token_exists.created < (token_exists.created + timedelta(minutes=3)):
+                if token_exists.activated:
+                    send_message(chat_id, "Bookie has already activated your account with this token!")
+                    return HttpResponse(status=200)
+
+            except ObjectDoesNotExist:
+                send_message(chat_id, "Hmm, looks like that token does not exist. Did you enter it correctly?")
+                return HttpResponse(status=200)
+
+
+            if timezone.now() < (token_exists.created + timedelta(minutes=3)):
                 token_exists.activated = True
                 token_exists.save()
                 result, msg = send_message(chat_id, "Success, your telegram account is now linked to Bookie!")
@@ -53,17 +70,24 @@ def telegram_api(request):
                     LOGGER.error(f"Could not send message to telegram user, status code: {msg}")
                 LOGGER.info(f"User \"{token_exists.user.username}\" activated telegram integration")
                 return HttpResponse(status=201)
-            else:
-                token_exists.token = get_random_string(length=5)
-                token_exists.save()
-                result, msg = send_message(chat_id, "Your token has expired, a new one has been generted.")
-                if not result:
-                    LOGGER.error(f"Could send message to telegram user, status code: {msg}")
-                LOGGER.info(f"User \"{token_exists.user.username}\" failed telegram integration, \
-                            token expired")
-                return HttpResponse(status=200)
 
-        telegram = get_object_or_404(Telegram, telegram_username=telegram_username)
+            token_exists.token = get_random_string(length=5)
+            token_exists.save()
+            result, msg = send_message(chat_id, "Your token has expired, a new one has been generted.")
+            if not result:
+                LOGGER.error(f"Could send message to telegram user, status code: {msg}")
+            LOGGER.info(f"User \"{token_exists.user.username}\" failed telegram integration, \
+                        token expired")
+            return HttpResponse(status=200)
+
+
+        try:
+            telegram = Telegram.objects.get(telegram_username=telegram_username)
+        except ObjectDoesNotExist:
+            send_message(chat_id, "That Telegram account name does not exist in Bookie, \
+                                   have you entered your username/firstname/lastname correctly?")
+            return HttpResponse(status=200)
+
 
         if is_url(content):
             parsed_html = parse_article(content)
