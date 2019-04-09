@@ -1,5 +1,7 @@
 # Bookie!
 
+[![Build Status](https://travis-ci.com/mjdubell/Bookie.svg?branch=master)](https://travis-ci.com/mjdubell/Bookie)
+
 **Bookie** is a simple Django app that stores links to information you intend to consume later. For example, if you found yourself bookmarking information from social media and websites, but your bookmarks are stored all over the place *and* you also forget to check what you have saved, then Bookie is for you!
 
 *Right now, you can only save links through Telegram.*
