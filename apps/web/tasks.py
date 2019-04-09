@@ -13,7 +13,7 @@ def notify(self, user_id: int):
     """ Task that notifies a user about bookmarks to read """
     try:
         user = User.objects.get(id=user_id)
-        bookmarks = Bookmarks.objects.filter(user=user, read=False).order_by("-created")[:5]
+        bookmarks = Bookmarks.objects.filter(user=user, read=False).order_by("?")[:5]
         msg_html = render_to_string('email/email.html', {'bookmarks': bookmarks})
         send_mail(
             'Bookie - You have bookmarks to checkout!',
