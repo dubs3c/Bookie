@@ -52,15 +52,12 @@ def delete_bookmark(request):
         user = request.user
         bookmark_id = data.get("bm_id")
 
-        bookmark = get_object_or_404(Bookmarks, bm_id=bookmark_id)
+        bookmark = get_object_or_404(Bookmarks, bm_id=bookmark_id, user=user)
 
-        if bookmark.user == user:
-            bookmark.delete()
-            return HttpResponse(status=200)
-        else:
-            return HttpResponse(status=404)
-    else:
-        return HttpResponse("bow chicka bow wow", content_type="text/plain")
+        bookmark.delete()
+        return HttpResponse(status=200)
+
+    return HttpResponse("bow chicka bow wow", content_type="text/plain")
 
 def mark_read(request):
     """ Mark a bookmark as read """
@@ -69,19 +66,18 @@ def mark_read(request):
         user = request.user
         bookmark_id = data.get("bm_id")
 
-        bookmark = get_object_or_404(Bookmarks, bm_id=bookmark_id)
+        bookmark = get_object_or_404(Bookmarks, bm_id=bookmark_id, user=user)
 
-        if bookmark.user == user:
-            if bookmark.read:
-                bookmark.read = False
-            else:
-                bookmark.read = True
-            bookmark.save()
-            return HttpResponse(status=200)
+        if bookmark.read:
+            bookmark.read = False
         else:
-            return HttpResponse(status=404)
-    else:
-        return HttpResponse("Introducing, neals...", content_type="text/plain")
+            bookmark.read = True
+
+        bookmark.save()
+        return HttpResponse(status=200)
+
+
+    return HttpResponse("Introducing, neals...", content_type="text/plain")
 
 
 def user_login(request):

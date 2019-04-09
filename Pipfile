@@ -22,6 +22,7 @@ psycopg2-binary = "*"
 pylint = "*"
 pylint-django = "*"
 flower = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.7"
