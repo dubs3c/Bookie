@@ -13,8 +13,7 @@ function save_bookmark(bookmarkId) {
     var data ={"bm_id": bookmarkId, "csrfmiddlewaretoken": csrftoken};
     send_ajax(data, "/dashboard/mark_bookmark", function(){
         //$("#"+data["id"]).fadeOut("slow", function(){ $(this).remove(); })
-        // Check if class already is set first
-        $(".link-save-button").addClass("bookmark-read");
+        $("#"+bookmarkId+" .link-save-button").toggleClass("bookmark-read");
     });
 }
 
