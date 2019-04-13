@@ -40,13 +40,13 @@ def https_upgrade(url: str) -> str:
     url = url.lower()
     if url.startswith("http://"):
         https_url = url.replace("http://", "https://")
-        resp = requests.get(url)
+        resp = requests.get(url, allow_redirects=True)
         if resp.status_code == 200:
             return https_url
 
     if not url.startswith("https://"):
         https_url = f"https://{url}"
-        resp = requests.get(https_url)
+        resp = requests.get(https_url, allow_redirects=True)
         if resp.status_code == 200:
             return https_url
 
