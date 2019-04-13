@@ -17,6 +17,7 @@ redis = "*"
 tornado = "<6.0.0"
 pyyaml = "==5.1"
 psycopg2-binary = "*"
+gunicorn = "*"
 
 [dev-packages]
 pylint = "*"
