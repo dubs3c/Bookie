@@ -8,7 +8,7 @@ import requests
 def parse_article(url: str) -> Dict:
     """ Parses the HTML output for URL and grabs title and description """
 
-    response = requests.get(url)
+    response = requests.get(https_upgrade(url))
     tree = html.fromstring(response.content)
     data = {"title": "", "description": "", "image": ""}
 
@@ -21,7 +21,7 @@ def parse_article(url: str) -> Dict:
     if description:
         data["description"] = description[0]
     if image:
-        data["image"] = image[0]
+        data["image"] = https_upgrade(image[0])
 
     return data
 
@@ -34,3 +34,20 @@ def is_url(url: str) -> bool:
         return True
 
     return False
+
+def https_upgrade(url: str) -> str:
+    """ Try to upgrade to HTTPS """
+    url = url.lower()
+    if url.startswith("http://"):
+        https_url = url.replace("http://", "https://")
+        resp = requests.get(url)
+        if resp.status_code == 200:
+            return https_url
+
+    if not url.startswith("https://"):
+        https_url = f"https://{url}"
+        resp = requests.get(https_url)
+        if resp.status_code == 200:
+            return https_url
+
+    return url
