@@ -4,7 +4,7 @@ services:
   bookie:
     container_name: bookie-prod
     build: .
-    command: bash -c "python manage.py migrate --settings=bookie.env.prod && python manage.py collectstatic --noinput --settings=bookie.env.prod && python manage.py runserver 0.0.0.0:8000 --settings=bookie.env.prod"
+    command: bash -c "python manage.py migrate --settings=bookie.env.prod && python manage.py collectstatic --noinput --settings=bookie.env.prod && ~/.local/bin/gunicorn bookie.wsgi --env DJANGO_SETTINGS_MODULE=bookie.env.prod --config=gunicorn.config.py"
     ports:
       - "127.0.0.1:8000:8000"
     volumes:
