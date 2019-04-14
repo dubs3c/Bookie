@@ -37,9 +37,9 @@ def is_url(url: str) -> bool:
 
 def https_upgrade(url: str) -> str:
     """ Try to upgrade to HTTPS """
-    url = url.lower()
-    if url.startswith("http://"):
-        https_url = url.replace("http://", "https://")
+    if url.lower().startswith("http://"):
+        to_https = re.compile(re.escape('http://'), re.IGNORECASE)
+        https_url = to_https.sub("https://", url)
         try:
             resp = requests.get(https_url, allow_redirects=True)
         except Exception:
@@ -47,7 +47,7 @@ def https_upgrade(url: str) -> str:
         if resp.status_code == 200:
             return https_url
 
-    if not url.startswith("https://"):
+    if not url.lower().startswith("https://"):
         https_url = f"https://{url}"
         try:
             resp = requests.get(https_url, allow_redirects=True)

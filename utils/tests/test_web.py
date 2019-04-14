@@ -19,8 +19,12 @@ class WebUtilsTestCase(SimpleTestCase):
         https = "https://dubell.io"
         domain = "dubell.io"
         www = "www.dubell.io"
+        test1 = "HtTP://dubell.io"
+        test2 = "HtTPs://dubell.io"
 
         self.assertEqual(https_upgrade(http), https)
         self.assertEqual(https_upgrade(https), https)
         self.assertEqual(https_upgrade(domain), https)
         self.assertEqual(https_upgrade(www), f"https://{www}")
+        self.assertEqual(https_upgrade(test1), https)
+        self.assertEqual(https_upgrade(test2), test2)
