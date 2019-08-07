@@ -32,7 +32,7 @@ function save_bookmark(bookmarkId) {
     });
 }
 
-function add_bookmark() {
+function addBookmark() {
     var bookmark = $("[name=add_bookmark_input]").val();
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
     var data ={"data": bookmark, "csrfmiddlewaretoken": csrftoken};

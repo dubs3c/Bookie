@@ -174,7 +174,8 @@ class TelegramApiTestCase(TestCase):
         mock_send.return_value = (True, "Success")
         mock_parse_article.return_value = {"description": "A super cool website",
                                            "title": "Probably the best website in the world",
-                                           "image": ""}
+                                           "image": "",
+                                           "body": ""}
 
         Telegram.objects.create(user=self.user, telegram_username="dabookieman",
                                 token="1234", activated=True)
