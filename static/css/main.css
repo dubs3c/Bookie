@@ -36,3 +36,7 @@
 footer {
     margin: 4em 0 4em 0;
 }
+
+.hidden {
+    display: none;
+}

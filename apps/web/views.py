@@ -13,6 +13,7 @@ from django.contrib import messages
 
 from .forms import RegistrationForm
 from .models import Bookmarks
+from utils.web import is_url, parse_article
 
 
 LOGGER = logging.getLogger(__name__)
@@ -29,7 +30,7 @@ def dashboard(request):
     """ Dashboard page """
     query_param = request.GET.get("filter")
     if query_param:
-        if query_param == "notread":
+        if query_param == "unread":
             bookmarks = Bookmarks.objects.filter(user=request.user, read=False).order_by("-created")
         if query_param == "read":
             bookmarks = Bookmarks.objects.filter(user=request.user, read=True).order_by("-created")
@@ -43,6 +44,26 @@ def dashboard(request):
 def settings(request):
     """ Settings page """
     return render(request, "web/settings.html")
+
+
+def add_bookmark(request):
+    """ Add a link from the dashboard """
+    if request.method == "POST":
+        req_data = request.POST
+        data = req_data.get("data")
+        if is_url(data):
+            parsed_html = parse_article(data)
+            Bookmarks.objects.create(user=request.user, link=data,
+                                     description=parsed_html["description"],
+                                     title=parsed_html["title"],
+                                     image=parsed_html["image"],
+                                     body=parsed_html["body"])
+            return HttpResponse(status=200)
+        else:
+            Bookmarks.objects.create(user=request.user, link=data)
+            return HttpResponse(status=200)
+
+    return HttpResponse(status=405)
 
 
 def delete_bookmark(request):

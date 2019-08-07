@@ -8,6 +8,7 @@ function delete_bookmark(bookmarkId) {
     });
 }
 
+// Archives bookmark
 function save_bookmark(bookmarkId) {
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
     var data ={"bm_id": bookmarkId, "csrfmiddlewaretoken": csrftoken};
@@ -17,6 +18,14 @@ function save_bookmark(bookmarkId) {
     });
 }
 
+function add_bookmark() {
+    var bookmark = $("[name=add_bookmark_input]").val()
+    var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+    var data ={"data": bookmark, "csrfmiddlewaretoken": csrftoken};
+    send_ajax(data, "/dashboard/add_bookmark", function(){
+        $("#add_bookmark_result").show(600).delay(2300).fadeOut(1200);
+    });   
+}
 
 function generate_telegram_code() {
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();

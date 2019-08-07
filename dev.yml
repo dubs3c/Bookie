@@ -47,6 +47,17 @@ services:
       - POSTGRES_USER=bookie
       - POSTGRES_PASSWORD=asdf
       - POSTGRES_DB=bookie
-  
+    ports:
+      - "0.0.0.0:5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@dubell.io
+      - PGADMIN_DEFAULT_PASSWORD=asdf
+      - PGADMIN_LISTEN_PORT=8484
+    ports:
+      - "0.0.0.0:8484:8484"
+
   redis:
     image: redis:5.0.3-alpine

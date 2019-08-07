@@ -3,18 +3,22 @@
 from typing import Dict
 import re
 from lxml import html
+
 import requests
+from readability import Document
 
 def parse_article(url: str) -> Dict:
     """ Parses the HTML output for URL and grabs title and description """
 
     response = requests.get(https_upgrade(url))
     tree = html.fromstring(response.content)
-    data = {"title": "", "description": "", "image": ""}
+    doc = Document(response.text)
+    data = {"title": "", "description": "", "image": "", "body": ""}
 
     title = tree.xpath('//title/text()')
     description = tree.xpath('//meta[@name="description"]/@content')
     image = tree.xpath('//meta[@property="og:image"]/@content')
+    body = doc.summary()
 
     if title:
         data["title"] = title[0]
@@ -22,13 +26,15 @@ def parse_article(url: str) -> Dict:
         data["description"] = description[0]
     if image:
         data["image"] = https_upgrade(image[0])
+    if body:
+        data["body"] = body
 
     return data
 
 
 def is_url(url: str) -> bool:
     """ Returns True if input is a URL """
-    regex = re.compile("http[s]?://[a-zA-z\.-]+\.[a-zA-Z]+")
+    regex = re.compile("http[s]?:\/\/[a-zA-z\.\-0-9]+\.[a-zA-Z]+")
     exists = regex.search(url)
     if exists:
         return True
