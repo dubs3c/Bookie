@@ -6,7 +6,6 @@ import json
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
@@ -91,10 +90,11 @@ def telegram_api(request):
 
         if is_url(content):
             parsed_html = parse_article(content)
-            Bookmarks.objects.create(user=telegram.user, link=content, 
+            Bookmarks.objects.create(user=telegram.user, link=content,
                                      description=parsed_html["description"],
                                      title=parsed_html["title"],
-                                     image=parsed_html["image"])
+                                     image=parsed_html["image"],
+                                     body=parsed_html["body"])
         else:
             Bookmarks.objects.create(user=telegram.user, link=content)
 

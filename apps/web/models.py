@@ -9,6 +9,7 @@ from django.dispatch import receiver
 from django.utils.crypto import get_random_string
 
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
+from utils.web import is_url as check_url
 
 class Profile(User):
     """ Extended user model """
@@ -32,6 +33,7 @@ class Bookmarks(models.Model):
     image = models.CharField(max_length=200, blank=True, null=True)
     title = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(null=True, blank=True)
+    body = models.TextField(null=True, blank=True)
     read = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
 
@@ -46,6 +48,11 @@ class Bookmarks(models.Model):
                 continue
         else:
             return super().save(*args, **kwargs)
+
+    def is_url(self):
+        """ Check the bookmark is actually a link """
+        return check_url(self.link)
+
 
 
 class ScheduledTasks(PeriodicTask):
