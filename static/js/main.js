@@ -1,5 +1,19 @@
 
 
+function send_ajax(data, url, callback) {
+	$.ajax({
+		type : "POST",
+        url : url,
+        data: data,
+		success: callback,
+		error: function(error) {
+            console.log("Error doing ajax request...");
+            console.log(error);
+		}
+	});
+}
+
+
 function delete_bookmark(bookmarkId) {
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
     var data ={"bm_id": bookmarkId, "csrfmiddlewaretoken": csrftoken};
@@ -19,7 +33,7 @@ function save_bookmark(bookmarkId) {
 }
 
 function add_bookmark() {
-    var bookmark = $("[name=add_bookmark_input]").val()
+    var bookmark = $("[name=add_bookmark_input]").val();
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
     var data ={"data": bookmark, "csrfmiddlewaretoken": csrftoken};
     send_ajax(data, "/dashboard/add_bookmark", function(){
@@ -35,18 +49,4 @@ function generate_telegram_code() {
         $("#secretcode .token").text(result["token"]);
         $("#secretcode").removeClass("invisible");
     });
-}
-
-
-function send_ajax(data, url, callback) {
-	$.ajax({
-		type : "POST",
-        url : url,
-        data: data,
-		success: callback,
-		error: function(error) {
-            console.log("Error doing ajax request...");
-            console.log(error);
-		}
-	});
 }
