@@ -1,13 +1,13 @@
 
 $(document).ready(function() {
 
-    $('.card-columns').infiniteScroll({
+    $(".card-columns").infiniteScroll({
         // options
-        path: '.pagination__next',
-        append: '.postcard',
+        path: ".pagination__next",
+        append: ".postcard",
         history: false,
-        status: '.page-load-status',
-        hideNav: '.pagination'
+        status: ".page-load-status",
+        hideNav: ".pagination"
     });
 
 });

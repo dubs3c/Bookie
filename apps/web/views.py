@@ -41,7 +41,7 @@ def dashboard(request):
 
     paginator = Paginator(bookmarks, 10)
     if page_id:
-        page = paginator.get_page(page_id)    
+        page = paginator.get_page(page_id)
     else:
         page = paginator.get_page(1)
     context = {"bookmarks": page}
