@@ -35,7 +35,7 @@
     <div class="col">
         <div class="card-columns">
             {% for bookmark in bookmarks %}
-                <div class="card mb-3" id="{{bookmark.bm_id}}">
+                <div class="card mb-3 postcard" id="{{bookmark.bm_id}}">
                     <div class="card-body">
                         {% if bookmark.image %}
                         <div class="row">
@@ -78,6 +78,38 @@
                 </div>
             {% endfor %}
         </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="pagination">
+            <span class="step-links">
+                {% if bookmarks.has_previous %}
+                    <a href="?page=1{% if 'filter' in request.GET %}&filter={{ request.GET.filter }}{% endif %}">&laquo; first</a>
+                    <a href="?page={{ bookmarks.previous_page_number }}{% if 'filter' in request.GET %}&filter={{ request.GET.filter }}{% endif %}">previous</a>
+                {% endif %}
+        
+                <span class="current">
+                    Page {{ bookmarks.number }} of {{ bookmarks.paginator.num_pages }}.
+                </span>
+        
+                {% if bookmarks.has_next %}
+                    <a class="pagination__next" href="?page={{ bookmarks.next_page_number }}{% if 'filter' in request.GET %}&filter={{ request.GET.filter }}{% endif %}">next</a>
+                    <a href="?page={{ bookmarks.paginator.num_pages }}{% if 'filter' in request.GET %}&filter={{ request.GET.filter }}{% endif %}">last &raquo;</a>
+                {% endif %}
+            </span>
+        </div>      
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 offset-md-4" style="text-align: center; margin: auto;">
+        <div class="page-load-status">
+            <p class="infinite-scroll-request">Loading...</p>
+            <button type="button" class="btn btn-light infinite-scroll-last" onclick="window.scrollTo(0,0);">End of content, go to the Top?</button>
+            <p class="infinite-scroll-error">No more pages to load</p>
+        </div>                   
     </div>
 </div>
 

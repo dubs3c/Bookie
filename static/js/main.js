@@ -1,4 +1,17 @@
 
+$(document).ready(function() {
+
+    $(".card-columns").infiniteScroll({
+        // options
+        path: ".pagination__next",
+        append: ".postcard",
+        history: false,
+        status: ".page-load-status",
+        hideNav: ".pagination"
+    });
+
+});
+
 
 function send_ajax(data, url, callback) {
 	$.ajax({
