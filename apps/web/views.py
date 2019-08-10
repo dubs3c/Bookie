@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 from .forms import RegistrationForm
 from .models import Bookmarks
@@ -29,6 +30,7 @@ def index(request):
 def dashboard(request):
     """ Dashboard page """
     query_param = request.GET.get("filter")
+    page_id = request.GET.get("page")
     if query_param:
         if query_param == "unread":
             bookmarks = Bookmarks.objects.filter(user=request.user, read=False).order_by("-created")
@@ -37,7 +39,12 @@ def dashboard(request):
     else:
         bookmarks = Bookmarks.objects.filter(user=request.user).order_by("-created")
 
-    context = {"bookmarks": bookmarks}
+    paginator = Paginator(bookmarks, 10)
+    if page_id:
+        page = paginator.get_page(page_id)    
+    else:
+        page = paginator.get_page(1)
+    context = {"bookmarks": page}
     return render(request, "web/index.html", context)
 
 
