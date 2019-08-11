@@ -81,6 +81,15 @@
     </div>
 </div>
 
+
+{% if not bookmarks %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+            <center><h3>Hmm, you have no bookmarks saved ☹️</h3></center>
+    </div>
+</div>
+{% else %}
+
 <div class="row">
     <div class="col">
         <div class="pagination">
@@ -107,19 +116,12 @@
     <div class="col-md-4 offset-md-4" style="text-align: center; margin: auto;">
         <div class="page-load-status">
             <p class="infinite-scroll-request">Loading...</p>
-            <button type="button" class="btn btn-light infinite-scroll-last" onclick="window.scrollTo(0,0);">End of content, go to the Top?</button>
+            <button type="button" class="btn btn-light btn-block infinite-scroll-last" onclick="window.scrollTo(0,0);">End of content, go to the Top?</button>
             <p class="infinite-scroll-error">No more pages to load</p>
         </div>                   
     </div>
 </div>
-
-<div class="row">
-    <div class="col">
-        {% if not bookmarks %}
-            <p><i>Nothing saved yet...</i></p>
-        {% endif %}
-    </div>
-</div>
+{% endif %}
 
 
 {% endblock %}
