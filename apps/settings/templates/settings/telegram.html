@@ -10,25 +10,25 @@
     <ol>
         <li>Add <code>@TheBookieBot</code> on telegram.</li>
         <li>Register your telegram username below in order to recieve your username.</li>
-        <li>Write <code>/register &lt;code&gt;</code> to the bot you just added.</li>
+        <form>
+                {% csrf_token %}
+                <div class="form-group">
+                    <input id="telegram_username" type="text" required class="form-control" placeholder="Your telegram username" />
+                    <small class="form-text text-muted">The code is valid for 3 minutes, after that you will need to generate a new one.</small>
+                </div>
+        
+                <input type="button" class="btn btn-primary" onclick="generate_telegram_code()" value="Generate code"/>
+            </form>
+            <br />
+            <div class="card" id="secretcode">
+                <div class="card-body">
+                    <h5 class="text-success">Your personal code:</h5>
+                    <span class="token"><small><i>Your personal code will appear here</i></small></span>
+                </div>
+            </div>
+        <li id="secretcode">Write <code>/register <span class="token">&lt;code&gt;</span></code> to the bot you just added.</li>
         <li>If everything worked smoothly, you now have connected your telegram account to Bookie!</li>
     </ol>
-    <form>
-        {% csrf_token %}
-        <div class="form-group">
-            <input id="telegram_username" type="text" required class="form-control" placeholder="Your telegram username" />
-            <small class="form-text text-muted">The code is valid for 3 minutes, after that you will need to generate a new one.</small>
-        </div>
-
-        <input type="button" class="btn btn-primary" onclick="generate_telegram_code()" value="Generate code"/>
-    </form>
-    <br />
-    <div class="card invisible" id="secretcode">
-        <div class="card-body">
-            <h5 class="text-success">Your personal code:</h5>
-            <p class="token"></p>
-        </div>
-    </div>
 
 </div>
 
