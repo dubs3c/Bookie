@@ -5,15 +5,19 @@ import re
 from lxml import html
 
 import requests
+from requests.exceptions import Timeout
 from readability import Document
 
 def parse_article(url: str) -> Dict:
     """ Parses the HTML output for URL and grabs title and description """
+    data = {"title": "", "description": "", "image": "", "body": ""}
+    try:
+        response = requests.get(https_upgrade(url), timeout=3)
+    except Timeout:
+        return data
 
-    response = requests.get(https_upgrade(url))
     tree = html.fromstring(response.content)
     doc = Document(response.text)
-    data = {"title": "", "description": "", "image": "", "body": ""}
 
     title = tree.xpath('//title/text()')
     description = tree.xpath('//meta[@name="description"]/@content')
@@ -47,7 +51,7 @@ def https_upgrade(url: str) -> str:
         to_https = re.compile(re.escape('http://'), re.IGNORECASE)
         https_url = to_https.sub("https://", url)
         try:
-            resp = requests.get(https_url, allow_redirects=True)
+            resp = requests.get(https_url, allow_redirects=True, timeout=3)
         except Exception:
             return url
         if resp.status_code == 200:
@@ -56,7 +60,7 @@ def https_upgrade(url: str) -> str:
     if not url.lower().startswith("https://"):
         https_url = f"https://{url}"
         try:
-            resp = requests.get(https_url, allow_redirects=True)
+            resp = requests.get(https_url, allow_redirects=True, timeout=3)
         except Exception:
             return url
         if resp.status_code == 200:

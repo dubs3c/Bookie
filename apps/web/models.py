@@ -25,6 +25,13 @@ class Profile(User):
             Profile.objects.create(user=instance)
         instance.profile.save()
 
+
+class BookmarkTags(models.Model):
+    """ Contains Bookmarks' tags """
+    name = models.CharField(max_length=30)
+    created = models.DateTimeField(auto_now=True)
+
+
 class Bookmarks(models.Model):
     """ Bookmarks """
     bm_id = models.CharField(max_length=7, unique=True)
@@ -34,6 +41,7 @@ class Bookmarks(models.Model):
     title = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(null=True, blank=True)
     body = models.TextField(null=True, blank=True)
+    tags = models.ManyToManyField(BookmarkTags)
     read = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now=True)
 
@@ -52,8 +60,6 @@ class Bookmarks(models.Model):
     def is_url(self):
         """ Check the bookmark is actually a link """
         return check_url(self.link)
-
-
 
 class ScheduledTasks(PeriodicTask):
     """ Adds additional information regarding scheduled tasks """

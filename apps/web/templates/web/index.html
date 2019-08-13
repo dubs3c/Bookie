@@ -56,7 +56,6 @@
                                     <span class="link-save-button {% if bookmark.read %} bookmark-read {% endif %}" 
                                         title=" Mark as read" onclick="save_bookmark('{{bookmark.bm_id}}')"><i class="fas fa-bookmark"></i></span>
                                 {% endif %}
-                                
                             </form>
                         </div>
 
@@ -73,7 +72,13 @@
                                 <p class="card-text">{{bookmark.link}}</p>
                             {% endif %}
                         {% endif %}
-                        
+
+                        {% for tag in bookmark.tags.all %}
+                            <span class="badge tag">{{tag.name}}</span>
+                        {% endfor %}
+                        <!--<i class="fas fa-plus-circle"></i>-->
+                        <small class="view-bookmark"><a href="{% url 'web:view_bookmark' bookmark.bm_id %}"><i style=" cursor: pointer;" class="fas fa-eye"></i> View</a></small>
+
                     </div>
                 </div>
             {% endfor %}

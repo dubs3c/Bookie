@@ -13,7 +13,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 
 from .forms import RegistrationForm
-from .models import Bookmarks
+from .models import Bookmarks, BookmarkTags
 from utils.web import is_url, parse_article
 
 
@@ -47,6 +47,28 @@ def dashboard(request):
     context = {"bookmarks": page}
     return render(request, "web/index.html", context)
 
+
+def view_bookmark(request, bookmark_id):
+    """ View a specific bookmark """
+    bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
+    return render(request, "web/bookmark.html", {"bookmark": bookmark})
+
+
+def bookmark_iframe(request, bookmark_id):
+    """ View article body in a sandboxed iframe """
+    bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
+    return render(request, "web/bookmark_sandbox.html", {"bookmark": bookmark})
+
+def add_bookmark_tag(request, bookmark_id):
+    """ Add a tag for a given bookmark """
+    if request.method == "POST":
+        tag = request.POST.get("tag")
+        bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
+        bookmark_tag = BookmarkTags.objects.create(tag=tag)
+        bookmark.tags.add(bookmark_tag)
+        return HttpResponse(status=200)
+
+    return HttpResponse(status=405)
 
 def settings(request):
     """ Settings page """
