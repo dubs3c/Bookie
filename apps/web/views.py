@@ -4,7 +4,7 @@ Contains all the dashboard views
 
 import logging
 
-from django.http import HttpResponse
+from django.http import HttpResponse, QueryDict
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
@@ -51,7 +51,7 @@ def dashboard(request):
 def view_bookmark(request, bookmark_id):
     """ View a specific bookmark """
     bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
-    return render(request, "web/bookmark.html", {"bookmark": bookmark})
+    return render(request, "web/bookmark.html", {"bookmark": bookmark, 'body_class': "bookmark-detail"})
 
 
 def bookmark_iframe(request, bookmark_id):
@@ -62,10 +62,17 @@ def bookmark_iframe(request, bookmark_id):
 def add_bookmark_tag(request, bookmark_id):
     """ Add a tag for a given bookmark """
     if request.method == "POST":
-        tag = request.POST.get("tag")
         bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
-        bookmark_tag = BookmarkTags.objects.create(tag=tag)
+        tag = request.POST.get("tag")
+        bookmark_tag = BookmarkTags.objects.create(name=tag)
         bookmark.tags.add(bookmark_tag)
+        return HttpResponse(status=201)
+
+    if request.method == "DELETE":
+        req = QueryDict(request.body)
+        tag = req.get("tag")
+        bookmark_tag = get_object_or_404(BookmarkTags, name=tag, bookmarks__user=request.user)
+        bookmark_tag.delete()
         return HttpResponse(status=200)
 
     return HttpResponse(status=405)

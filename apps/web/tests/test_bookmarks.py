@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 from django.test import TestCase
 from django.urls import reverse
 
-from apps.web.models import Bookmarks, Profile
+from apps.web.models import Bookmarks, BookmarkTags, Profile
 
 
 class BookmarkTestCase(TestCase):
@@ -99,3 +99,52 @@ class BookmarkTestCase(TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertTrue(Bookmarks.objects.all())
 
+    def test_add_bookmark_tag(self):
+        """ Add tags to bookmark """
+        obj = Bookmarks.objects.create(user=self.user1)
+
+        self.client.force_login(self.user1)
+        url = reverse('web:add_bookmark_tag', kwargs={"bookmark_id": obj.bm_id})
+        response = self.client.post(url, {"tag": "test-tag"})
+
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(Bookmarks.objects.filter(tags__name="test-tag"))
+
+    def test_add_bookmark_tag_other_user(self):
+        """ It should not be possible to add tags for a bookmark belonging to an other user """
+        obj = Bookmarks.objects.create(user=self.user1)
+
+        self.client.force_login(self.user2)
+        url = reverse('web:add_bookmark_tag', kwargs={"bookmark_id": obj.bm_id})
+        response = self.client.post(url, {"tag": "error"})
+
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(Bookmarks.objects.filter(tags__name="error"))
+
+    def test_remove_bookmark_tag(self):
+        """ Remove tags from bookmark """
+        obj = Bookmarks.objects.create(user=self.user1)
+        tag = BookmarkTags.objects.create(name="test-remove-tag")
+        obj.tags.add(tag)
+        obj.save()
+
+        self.client.force_login(self.user1)
+        url = reverse('web:add_bookmark_tag', kwargs={"bookmark_id": obj.bm_id})
+        response = self.client.delete(url, "tag=test-remove-tag")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Bookmarks.objects.filter(tags__name="test-remove-tag"))
+
+    def test_remove_bookmark_tag_other_user(self):
+        """ It should not be possible to remove tags from a bookmark belonging to an other user """
+        obj = Bookmarks.objects.create(user=self.user1)
+        tag = BookmarkTags.objects.create(name="test-remove-tag")
+        obj.tags.add(tag)
+        obj.save()
+
+        self.client.force_login(self.user2)
+        url = reverse('web:add_bookmark_tag', kwargs={"bookmark_id": obj.bm_id})
+        response = self.client.delete(url, "tag=test-remove-tag")
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(Bookmarks.objects.filter(tags__name="test-remove-tag"))

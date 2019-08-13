@@ -28,7 +28,7 @@ class Profile(User):
 
 class BookmarkTags(models.Model):
     """ Contains Bookmarks' tags """
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, unique=True)
     created = models.DateTimeField(auto_now=True)
 
 
