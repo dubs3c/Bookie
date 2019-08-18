@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row">
+    <div class="col">
+        <p><a href="../"><i class="fas fa-arrow-alt-circle-left"></i> Go back</a></p>
+        <div class="card2 p-3 mb-5 bg-white rounded">
+            <!-- Implement later
+            <div class="row">
+                <div class="col-auto ml-auto">
+                    <button class="btn btn-outline-success btn-sm" title="Let bookie parse the URL again">Re-visit</button>
+                    <button class="btn btn-outline-danger btn-sm">Delete</button>
+                </div>
+            </div>
+            -->
+            <br />
+
+            <div class="row">
+                <div class="col-md-4">
+                    <h4>Title:</h4>
+                    <p>{{bookmark.title}}</p> 
+                </div>
+                <div class="col-md-4">
+                    <h4>Description:</h4>
+                    <p>{{bookmark.description}}</p>
+                </div>
+                <div class="col-md-4">
+                    <h4>Tags:</h4>
+                    {% csrf_token %}
+                    <div class="tag-container">
+                        {% for tag in bookmark.tags.all %}
+                            <div class="tag">
+                                <span>{{tag.name}}</span><i class="material-icons" data-item="{{tag.name}}">x</i>
+                            </div>
+                        {% endfor %}
+                        
+                        <input placeholder="Press enter to add tag"  />  
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <hr />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Meta:</h4>
+                    <ul style="padding: 0; list-style-type: none;">
+                        <li><span style="font-weight: 600;">Saved:</span> {{bookmark.created}}</li>
+                        <li><span style="font-weight: 600;">URL:</span> <a href="{{bookmark.link}}">{{bookmark.link}}</a></li>
+                        <li><span style="font-weight: 600;">Read:</span> {{bookmark.read}}</li>
+                        <li style="visibility: hidden;"><span style="font-weight: 600;">Id:</span> <span class="bookmark_bm_id">{{bookmark.bm_id}}</span></li>
+                    </ul>
+                </div>
+                {% if bookmark.image %}
+                <div class="col-md-6">
+                    <h4>Image:</h4>
+                    <img src="{{bookmark.image}}" max-width="100%" height="256"/>
+                </div>
+                {% endif %}
+            </div>
+            <br />
+            {% if bookmark.body %}
+            <hr />
+            <div class="row">
+                <div class="col">
+                    <iframe src="{% url 'web:bookmark_iframe' bookmark.bm_id %}" width="100%" height="600px" sandbox>
+                    </iframe>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

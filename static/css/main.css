@@ -44,3 +44,71 @@ footer {
 .page-load-status button, .page-load-status p {
     font-weight: 600;
 }
+
+.tag {
+    background: #e8ecef;
+    color: #4d5c6c;
+}
+.fa-plus-circle {
+    color: #4d5c6c;
+}
+
+.container-tag {
+    margin: 10px 0 0 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+.tag-container {
+    border-bottom: 2px solid #ccc;
+    background: #fff;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    padding: 2px 0 2px 0;
+}
+.tag-container .tag {
+    height: 30px;
+    margin: 5px;
+    padding: 5px 6px;
+    border-radius: 6px;
+    background: #0052cc;
+    display: flex;
+    align-items: center;
+    color: #fff;
+}
+.tag i {
+    margin-left: 8px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.tag span {
+    margin-bottom: 3px;
+}
+.tag-container input {
+    border: 0;
+    outline: none;
+    flex: 1;
+}
+
+.view-bookmark {
+    color: #cbcbcb;
+    font-family: 'Courier New', Courier, monospace;
+    display: block;
+    margin-top: 1em;
+}
+
+.view-bookmark a {
+    text-decoration: none;
+    color: #cbcbcb;
+}
+
+.view-bookmark a:hover {
+    color: #007bff;
+}
+
+#bookmark_image img {
+    max-height: 400px;
+    width: 100%;
+    margin-bottom: 1em;
+}

@@ -4,7 +4,7 @@ Contains all the dashboard views
 
 import logging
 
-from django.http import HttpResponse
+from django.http import HttpResponse, QueryDict
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
@@ -13,7 +13,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 
 from .forms import RegistrationForm
-from .models import Bookmarks
+from .models import Bookmarks, BookmarkTags
 from utils.web import is_url, parse_article
 
 
@@ -47,6 +47,35 @@ def dashboard(request):
     context = {"bookmarks": page}
     return render(request, "web/index.html", context)
 
+
+def view_bookmark(request, bookmark_id):
+    """ View a specific bookmark """
+    bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
+    return render(request, "web/bookmark.html", {"bookmark": bookmark, 'body_class': "bookmark-detail"})
+
+
+def bookmark_iframe(request, bookmark_id):
+    """ View article body in a sandboxed iframe """
+    bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
+    return render(request, "web/bookmark_sandbox.html", {"bookmark": bookmark})
+
+def add_bookmark_tag(request, bookmark_id):
+    """ Add a tag for a given bookmark """
+    if request.method == "POST":
+        bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
+        tag = request.POST.get("tag")
+        bookmark_tag = BookmarkTags.objects.create(name=tag)
+        bookmark.tags.add(bookmark_tag)
+        return HttpResponse(status=201)
+
+    if request.method == "DELETE":
+        req = QueryDict(request.body)
+        tag = req.get("tag")
+        bookmark_tag = get_object_or_404(BookmarkTags, name=tag, bookmarks__user=request.user)
+        bookmark_tag.delete()
+        return HttpResponse(status=200)
+
+    return HttpResponse(status=405)
 
 def settings(request):
     """ Settings page """
