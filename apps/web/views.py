@@ -64,7 +64,7 @@ def add_bookmark_tag(request, bookmark_id):
     if request.method == "POST":
         bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
         tag = request.POST.get("tag")
-        bookmark_tag = BookmarkTags.objects.create(name=tag)
+        bookmark_tag, bookmark_tag_created = BookmarkTags.objects.get_or_create(name=tag)
         bookmark.tags.add(bookmark_tag)
         return HttpResponse(status=201)
 
