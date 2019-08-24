@@ -71,8 +71,9 @@ def add_bookmark_tag(request, bookmark_id):
     if request.method == "DELETE":
         req = QueryDict(request.body)
         tag = req.get("tag")
-        bookmark_tag = get_object_or_404(BookmarkTags, name=tag, bookmarks__user=request.user)
-        bookmark_tag.delete()
+        bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
+        bookmark_tag = get_object_or_404(BookmarkTags, name=tag, bookmarks__user=request.user, bookmarks__bm_id=bookmark_id)
+        bookmark.tags.remove(bookmark_tag)
         return HttpResponse(status=200)
 
     return HttpResponse(status=405)
