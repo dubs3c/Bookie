@@ -22,7 +22,7 @@ jieba==0.39
 jieba3k==0.35.1
 kombu==4.5.0
 lxml==4.3.3
-nltk==3.4.4
+nltk==3.4.5
 paramiko==2.4.2
 Pillow==6.0.0
 psycopg2-binary==2.8.1
