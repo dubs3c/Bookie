@@ -6,6 +6,10 @@
 
 *Right now, you can only save links through Telegram.*
 
+![bookie](docs/screenshots/bookie1.png)
+![bookie](docs/screenshots/bookie2.png)
+![bookie](docs/screenshots/bookie3.png)
+
 ## Motivation
 
 I save a lot of links, tweets and articles that I intend to read later, but I always forget to actually check my what I have saved. On twitter I use the *like* or *bookmark* functionality to save interesting tweets for later. Sometimes I save them to my *Saved messages* on Telegram or use the Google Inbox bookmark functionality. Needless to say, I need a single source which stores all my links and notifies me after some period of time to remind me what I recently saved. And so Bookie was born.
