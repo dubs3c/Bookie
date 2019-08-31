@@ -12,7 +12,8 @@ def parse_article(url: str) -> Dict:
     """ Parses the HTML output for URL and grabs title and description """
     data = {"title": "", "description": "", "image": "", "body": ""}
     try:
-        response = requests.get(https_upgrade(url), timeout=3)
+        headers = {'user-agent': 'Bookie/app'}
+        response = requests.get(https_upgrade(url), timeout=3, headers=headers)
     except Timeout:
         return data
 
@@ -47,11 +48,12 @@ def is_url(url: str) -> bool:
 
 def https_upgrade(url: str) -> str:
     """ Try to upgrade to HTTPS """
+    headers = {'user-agent': 'Bookie/app'}
     if url.lower().startswith("http://"):
         to_https = re.compile(re.escape('http://'), re.IGNORECASE)
         https_url = to_https.sub("https://", url)
         try:
-            resp = requests.get(https_url, allow_redirects=True, timeout=3)
+            resp = requests.get(https_url, allow_redirects=True, timeout=3, headers=headers)
         except Exception:
             return url
         if resp.status_code == 200:
@@ -60,7 +62,7 @@ def https_upgrade(url: str) -> str:
     if not url.lower().startswith("https://"):
         https_url = f"https://{url}"
         try:
-            resp = requests.get(https_url, allow_redirects=True, timeout=3)
+            resp = requests.get(https_url, allow_redirects=True, timeout=3, headers=headers)
         except Exception:
             return url
         if resp.status_code == 200:
