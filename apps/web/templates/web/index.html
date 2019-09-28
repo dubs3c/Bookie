@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load static %}
 
 <div class="row">
     <div class="col">
@@ -31,60 +32,72 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col">
-        <div class="card-columns">
-            {% for bookmark in bookmarks %}
-                <div class="card mb-3 postcard" id="{{bookmark.bm_id}}">
-                    <div class="card-body">
-                        {% if bookmark.image %}
-                        <div class="row">
-                            <div class="col">
-                                <img src="{{bookmark.image}}" style="max-width: 100%; margin-bottom: 15px" />
-                            </div>
-                        </div>
-                        {% endif %}
 
-                        <div class="float-right">
-                            <form>
-                                {% csrf_token %}
-                                <span class="link-delete-button" title="Delete bookmark" onclick="delete_bookmark('{{bookmark.bm_id}}')"><i class="fas fa-times"></i></span>
-                                {% if bookmark.read %}
-                                    <span class="link-save-button {% if bookmark.read %} bookmark-read {% endif %}"
-                                        title="Bookmark read" onclick="save_bookmark('{{bookmark.bm_id}}')"><i class="fas fa-bookmark"></i></span>
-                                {% else %}
-                                    <span class="link-save-button {% if bookmark.read %} bookmark-read {% endif %}" 
-                                        title=" Mark as read" onclick="save_bookmark('{{bookmark.bm_id}}')"><i class="fas fa-bookmark"></i></span>
-                                {% endif %}
-                            </form>
-                        </div>
-
-                        {% if bookmark.title %}
-                            <h4 class="card-title"><a href="{{ bookmark.link }}" target="_blank">{{bookmark.title}}</a></h4>
-                        {% endif %}
-                        {% if bookmark.description %}
-                            <p class="card-text">{{bookmark.description}}</p>
-                            <p class="card-text"><small class="text-muted">{{bookmark.link}}</small></p>
-                        {% else %}
-                            {% if bookmark.is_url %}
-                                <a href="{{bookmark.link}}"><p class="card-text">{{bookmark.link}}</p></a>
+<div class="infinitive-scroll">
+    {% for bookmark in bookmarks %}
+    <div class="card mb-3 postcard" id="{{bookmark.bm_id}}">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            {% if bookmark.image %}
+                            <img src="{{bookmark.image}}" style="max-width: 100%; margin-bottom: 15px" />
                             {% else %}
-                                <p class="card-text">{{bookmark.link}}</p>
+                                <div style="width: 499px; height: 280.86px; margin-bottom: 15px; background: whitesmoke">
+                                    <img src="{% static 'img/placeholder-img.png' %}" width="499" height="280.86" />
+                                </div>
                             {% endif %}
-                        {% endif %}
+                        </div>
+                    </div>
 
-                        {% for tag in bookmark.tags.all %}
-                            <span class="badge tag">{{tag.name}}</span>
-                        {% endfor %}
-                        <!--<i class="fas fa-plus-circle"></i>-->
-                        <small class="view-bookmark"><a href="{% url 'web:view_bookmark' bookmark.bm_id %}"><i style=" cursor: pointer;" class="fas fa-eye"></i> View</a></small>
+                    <div class="float-right">
 
                     </div>
                 </div>
-            {% endfor %}
+
+            </div>
+            <div class="col-md-6">
+                <div class="card-body">
+                {% if bookmark.title %}
+                    <h4 class="card-title"><a href="{{ bookmark.link }}" target="_blank">{{bookmark.title}}</a></h4>
+                {% endif %}
+                {% if bookmark.description %}
+                    <p class="card-text">{{bookmark.description}}</p>
+                    <p class="card-text"><small class="text-muted">{{bookmark.link}}</small></p>
+                {% else %}
+                    {% if bookmark.is_url %}
+                        <a href="{{bookmark.link}}"><p class="card-text">{{bookmark.link}}</p></a>
+                    {% else %}
+                        <p class="card-text">{{bookmark.link}}</p>
+                    {% endif %}
+                {% endif %}
+
+                {% for tag in bookmark.tags.all %}
+                    <span class="badge tag">{{tag.name}}</span>
+                {% endfor %}
+                <!--<i class="fas fa-plus-circle"></i>-->
+
+                    <form>
+                        {% csrf_token %}
+                        <small class="view-bookmark"><a href="{% url 'web:view_bookmark' bookmark.bm_id %}"><i style=" cursor: pointer;" class="fas fa-eye"></i> View</a>
+                        <span class="link-delete-button" title="Delete bookmark" onclick="delete_bookmark('{{bookmark.bm_id}}')"><i class="fas fa-times"></i> Delete</span>
+                        {% if bookmark.read %}
+                            <span class="link-save-button {% if bookmark.read %} bookmark-read {% endif %}"
+                                title="Bookmark read" onclick="save_bookmark('{{bookmark.bm_id}}')"><i class="fas fa-bookmark"></i> Archived</span>
+                        {% else %}
+                            <span class="link-save-button {% if bookmark.read %} bookmark-read {% endif %}"
+                                title=" Mark as read" onclick="save_bookmark('{{bookmark.bm_id}}')"><i class="fas fa-bookmark"></i> Archive</span>
+                        {% endif %}
+                            </small>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
+    {% endfor %}
 </div>
+<br />
 
 
 {% if not bookmarks %}

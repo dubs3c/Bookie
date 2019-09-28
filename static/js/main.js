@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
 
-    $(".card-columns").infiniteScroll({
+    $(".infinitive-scroll").infiniteScroll({
         // options
         path: ".pagination__next",
         append: ".postcard",
