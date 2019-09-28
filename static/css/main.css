@@ -7,7 +7,6 @@
 .link-delete-button, .link-save-button {
     color: #cbcbcb;
     cursor: pointer;
-    margin-left: 10px;
 }
 
 .link-delete-button:hover {
