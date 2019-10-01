@@ -4,7 +4,7 @@ from unittest import mock
 
 from django.test import SimpleTestCase
 
-from utils.web import https_upgrade
+from utils.web import https_upgrade, is_url_blacklisted
 
 
 class WebUtilsTestCase(SimpleTestCase):
@@ -28,3 +28,17 @@ class WebUtilsTestCase(SimpleTestCase):
         self.assertEqual(https_upgrade(www), f"https://{www}")
         self.assertEqual(https_upgrade(test1), https)
         self.assertEqual(https_upgrade(test2), test2)
+
+    def test_is_url_blacklisted(self):
+        """ A request will always include protocol.
+        :return:
+        """
+        self.assertTrue(is_url_blacklisted("http://LocAlHosT"))
+        self.assertTrue(is_url_blacklisted("http://localhost/"))
+        self.assertTrue(is_url_blacklisted("http://localhost:80/"))
+        self.assertTrue(is_url_blacklisted("http://127.0.0.1"))
+        self.assertTrue(is_url_blacklisted("hTTPs://169.254.169.254"))
+        self.assertTrue(is_url_blacklisted("hTTPs://localhost:80"))
+
+        self.assertFalse(is_url_blacklisted("http://www.localhost.com"))
+        self.assertFalse(is_url_blacklisted("http://localhost.co.uk"))

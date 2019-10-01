@@ -35,7 +35,6 @@ def telegram_api(request):
             LOGGER.error(error)
             return HttpResponse(status=400)
 
-
         if content.startswith("/register"):
             cmd = content.strip().split(" ")
 
@@ -60,7 +59,6 @@ def telegram_api(request):
                 send_message(chat_id, "Hmm, looks like that token does not exist. Did you enter it correctly?")
                 return HttpResponse(status=200)
 
-
             if timezone.now() < (token_exists.created + timedelta(minutes=3)):
                 token_exists.activated = True
                 token_exists.save()
@@ -79,7 +77,6 @@ def telegram_api(request):
                         token expired")
             return HttpResponse(status=200)
 
-
         try:
             telegram = Telegram.objects.get(telegram_username=telegram_username)
         except ObjectDoesNotExist:
@@ -87,14 +84,17 @@ def telegram_api(request):
                                    have you entered your username/firstname/lastname correctly?")
             return HttpResponse(status=200)
 
-
         if is_url(content):
             parsed_html = parse_article(content)
-            Bookmarks.objects.create(user=telegram.user, link=content,
-                                     description=parsed_html["description"],
-                                     title=parsed_html["title"],
-                                     image=parsed_html["image"],
-                                     body=parsed_html["body"])
+            if parsed_html:
+                Bookmarks.objects.create(user=telegram.user, link=content,
+                                         description=parsed_html["description"],
+                                         title=parsed_html["title"],
+                                         image=parsed_html["image"],
+                                         body=parsed_html["body"])
+            else:
+                send_message(chat_id, "Sorry, could not add that link :/")
+                return HttpResponse(status=200)
         else:
             Bookmarks.objects.create(user=telegram.user, link=content)
 

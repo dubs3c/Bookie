@@ -7,9 +7,18 @@ from lxml import html
 import requests
 from requests.exceptions import Timeout
 from readability import Document
+from urllib.parse import urlparse
+
 
 def parse_article(url: str) -> Dict:
-    """ Parses the HTML output for URL and grabs title and description """
+    """
+    Parses the HTML output for URL and grabs title and description
+    :param url: The URL sent by the user
+    :return: Dictionary containing HTML data
+    """
+    if is_url_blacklisted(url):
+        return {}
+
     data = {"title": "", "description": "", "image": "", "body": ""}
     try:
         headers = {'user-agent': 'Bookie/app'}
@@ -38,29 +47,35 @@ def parse_article(url: str) -> Dict:
 
 
 def is_url(url: str) -> bool:
-    """ Returns True if input is a URL """
-    regex = re.compile("http[s]?:\/\/[a-zA-z\.\-0-9]+\.[a-zA-Z]+")
+    """
+    Returns True if input is a URL
+    :param url: The URL sent by the user
+    :return: Return True if url is a URL, false if not
+    """
+    regex = re.compile(r"http[s]?:\/\/[a-zA-z\.\-0-9]+\.[a-zA-Z]+")
     exists = regex.search(url)
     if exists:
         return True
 
     return False
 
+
 def https_upgrade(url: str) -> str:
-    """ Try to upgrade to HTTPS """
+    """
+    Try To upgrade to HTTPS
+    :param url: The URL sent by the user
+    :return: The HTTP or HTTPS version
+    """
     headers = {'user-agent': 'Bookie/app'}
+    https_url = ""
     if url.lower().startswith("http://"):
         to_https = re.compile(re.escape('http://'), re.IGNORECASE)
         https_url = to_https.sub("https://", url)
-        try:
-            resp = requests.get(https_url, allow_redirects=True, timeout=3, headers=headers)
-        except Exception:
-            return url
-        if resp.status_code == 200:
-            return https_url
 
-    if not url.lower().startswith("https://"):
+    elif not url.lower().startswith("https://"):
         https_url = f"https://{url}"
+
+    if https_url:
         try:
             resp = requests.get(https_url, allow_redirects=True, timeout=3, headers=headers)
         except Exception:
@@ -69,3 +84,21 @@ def https_upgrade(url: str) -> str:
             return https_url
 
     return url
+
+
+def is_url_blacklisted(url: str) -> bool:
+    """
+    Check if URL is allowed to process.
+    :param url: The URL sent by the user
+    :return: True if blacklisted, False if not
+    """
+    blacklist = [
+        "127.0.0.1",
+        "169.254.169.254",
+        "localhost",
+    ]
+
+    domain = urlparse(url).netloc.lower().split(":")[0]
+    if domain in blacklist:
+        return True
+    return False
