@@ -2,43 +2,14 @@
 {% block settings %}
 
 <h3>Data Portability</h3>
-<div class="infinitive-scroll">
-    <form action="{% url 'settings:data_portability' %}" method="post">
-        <button type="submit" class="btn btn-primary my-1">Export</button>
-    </form>
-    <br />
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Url</th>
-                <th>Tag</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for bookmark in bookmarks %}
-            <tr>
-                {% if bookmark.title %}
-                <td>{{bookmark.title}}</td>
-                {% else %}
-                <td>No title</td>
-                {% endif %}
-
-                {% if bookmark.link %}
-                <td>{{bookmark.link}}</td>
-                {% else %}
-                <td>No link</td>
-                {% endif %}
-
-                {% if bookmark.tags %}
-                <td>{{bookmark.tags.name}}</td>
-                {% else %}
-                <td>No tags</td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-<br />
+{% if bookmarks %}
+<p>If you want to export all your bookmarks and import them to an other service, you can do so below. The downloaded
+    file will be a comma separated file (csv).</p>
+<form action="{% url 'settings:data_portability' %}" method="post">
+    {% csrf_token  %}
+    <button type="submit" class="btn btn-primary">Export your bookmarks!</button>
+</form>
+{% else %}
+<p>No Bookmarks found, nothing to export.</p>
+{% endif %}
 {% endblock %}
