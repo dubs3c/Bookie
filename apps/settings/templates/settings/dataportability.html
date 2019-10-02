@@ -2,6 +2,43 @@
 {% block settings %}
 
 <h3>Data Portability</h3>
-<p>Coming soon...</p>
+<div class="infinitive-scroll">
+    <form action="{% url 'settings:data_portability' %}" method="post">
+        <button type="submit" class="btn btn-primary my-1">Export</button>
+    </form>
+    <br />
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Url</th>
+                <th>Tag</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bookmark in bookmarks %}
+            <tr>
+                {% if bookmark.title %}
+                <td>{{bookmark.title}}</td>
+                {% else %}
+                <td>No title</td>
+                {% endif %}
 
+                {% if bookmark.link %}
+                <td>{{bookmark.link}}</td>
+                {% else %}
+                <td>No link</td>
+                {% endif %}
+
+                {% if bookmark.tags %}
+                <td>{{bookmark.tags.name}}</td>
+                {% else %}
+                <td>No tags</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<br />
 {% endblock %}

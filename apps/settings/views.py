@@ -6,6 +6,7 @@ from datetime import timedelta
 import logging
 import pytz
 
+from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
 from django.template.loader import get_template
@@ -90,9 +91,31 @@ def integrations(request):
     return render(request, "settings/integrations.html", context=data)
 
 
+@csrf_exempt
 def data_portability(request):
     """ Export bookmarks """
-    return render(request, "settings/dataportability.html")
+    from apps.web.models import Bookmarks
+    import csv
+
+    user = request.user
+    bookmarks = Bookmarks.objects.filter(user=user)\
+        .values('title', 'link', 'description')
+    data = {}
+    if bookmarks:
+        data = {"bookmarks": list(bookmarks)}
+    if request.method == "POST":
+        if bookmarks:
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] =\
+                'attachment; filename="bookie_output.csv"'
+            writer = csv.writer(response)
+            writer.writerow(['Title', 'Link', 'Description'])
+            for bm in bookmarks:
+                writer.writerow([bm['title'],
+                                 bm['link'],
+                                 bm['description']])
+            return response
+    return render(request, "settings/dataportability.html", context=data)
 
 
 def integration_detail(request, integration):
