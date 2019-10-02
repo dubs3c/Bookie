@@ -5,8 +5,8 @@ Contains all the setting views
 from datetime import timedelta
 import logging
 import pytz
+import csv
 
-from django.views.decorators.csrf import csrf_exempt
 from django.utils.crypto import get_random_string
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
 from django.template.loader import get_template
@@ -21,7 +21,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import redirect
 
-from apps.web.models import CrontabScheduleUser
+from apps.web.models import CrontabScheduleUser, Bookmarks
 from .forms import ChangePasswordForm, CronForm, ProfileForm
 from .models import Telegram
 
@@ -91,11 +91,8 @@ def integrations(request):
     return render(request, "settings/integrations.html", context=data)
 
 
-@csrf_exempt
 def data_portability(request):
     """ Export bookmarks """
-    from apps.web.models import Bookmarks
-    import csv
 
     user = request.user
     bookmarks = Bookmarks.objects.filter(user=user)\
