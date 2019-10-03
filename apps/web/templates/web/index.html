@@ -28,6 +28,14 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col">
+                    <h5>Tags</h5>
+                    {% for tag in tags %}
+                         <span class="badge tag tag-button">{{tag.name}}</span>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
 </div>

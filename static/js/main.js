@@ -27,6 +27,16 @@ function send_ajax(data, url, callback) {
 }
 
 
+function filter_on_tags(tag){
+
+
+}
+
+
+function is_tag_active() {
+
+}
+
 function delete_bookmark(bookmarkId) {
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
     var data ={"bm_id": bookmarkId, "csrfmiddlewaretoken": csrftoken};
