@@ -94,25 +94,44 @@ def integrations(request):
 def data_portability(request):
     """ Export bookmarks """
 
-    user = request.user
-    bookmarks = Bookmarks.objects.filter(user=user)\
-        .values('title', 'link', 'description')
-    data = {}
-    if bookmarks:
-        data = {"bookmarks": list(bookmarks)}
     if request.method == "POST":
+        user = request.user
+        bookmarks = Bookmarks.objects.filter(user=user)\
+            .values('bm_id', 'title', 'link', 'image', 'description', 'read', 'created', 'tags__name', 'body')\
+            .order_by('-id')
+
+        merged = {}
         if bookmarks:
-            response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] =\
-                'attachment; filename="bookie_output.csv"'
-            writer = csv.writer(response)
-            writer.writerow(['Title', 'Link', 'Description'])
-            for bm in bookmarks:
-                writer.writerow([bm['title'],
-                                 bm['link'],
-                                 bm['description']])
-            return response
-    return render(request, "settings/dataportability.html", context=data)
+            # The bookmarks object will contain duplicates because of the many2many field on tags.
+            # Items needs to be merged.
+            for item in bookmarks:
+                if not item["bm_id"] in merged.keys():
+                    merged[item["bm_id"]] = item
+                else:
+                    tags = item["tags__name"]
+                    x = merged[item["bm_id"]]
+                    if tags and x["tags__name"]:
+                        x["tags__name"] += f", {tags}"
+                        merged[item["bm_id"]] = x
+        # print(merged.items())
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] =\
+            'attachment; filename="bookie_output.csv"'
+        writer = csv.writer(response, delimiter=';')
+        writer.writerow(['Title', 'Link', 'Image', 'Description',
+                         'Read', 'Created', 'Tags', 'Body'])
+        for key, bm in merged.items():
+            writer.writerow([bm.get('title'),
+                             bm.get('link'),
+                             bm.get('image'),
+                             bm.get('description'),
+                             bm.get('read'),
+                             bm.get('created'),
+                             bm.get('tags__name'),
+                             bm.get('body')])
+        return response
+    return render(request, "settings/dataportability.html")
 
 
 def integration_detail(request, integration):
