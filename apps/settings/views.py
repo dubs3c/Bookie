@@ -113,7 +113,6 @@ def data_portability(request):
                     if tags and x["tags__name"]:
                         x["tags__name"] += f", {tags}"
                         merged[item["bm_id"]] = x
-        # print(merged.items())
 
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] =\
