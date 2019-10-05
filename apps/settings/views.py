@@ -5,6 +5,7 @@ Contains all the setting views
 from datetime import timedelta
 import logging
 import pytz
+import csv
 
 from django.utils.crypto import get_random_string
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
@@ -20,7 +21,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import redirect
 
-from apps.web.models import CrontabScheduleUser
+from apps.web.models import CrontabScheduleUser, Bookmarks
 from .forms import ChangePasswordForm, CronForm, ProfileForm
 from .models import Telegram
 
@@ -92,6 +93,43 @@ def integrations(request):
 
 def data_portability(request):
     """ Export bookmarks """
+
+    if request.method == "POST":
+        user = request.user
+        bookmarks = Bookmarks.objects.filter(user=user)\
+            .values('bm_id', 'title', 'link', 'image', 'description', 'read', 'created', 'tags__name', 'body')\
+            .order_by('-id')
+
+        merged = {}
+        if bookmarks:
+            # The bookmarks object will contain duplicates because of the many2many field on tags.
+            # Items needs to be merged.
+            for item in bookmarks:
+                if not item["bm_id"] in merged.keys():
+                    merged[item["bm_id"]] = item
+                else:
+                    tags = item["tags__name"]
+                    x = merged[item["bm_id"]]
+                    if tags and x["tags__name"]:
+                        x["tags__name"] += f", {tags}"
+                        merged[item["bm_id"]] = x
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] =\
+            'attachment; filename="bookie_output.csv"'
+        writer = csv.writer(response, delimiter=';')
+        writer.writerow(['Title', 'Link', 'Image', 'Description',
+                         'Read', 'Created', 'Tags', 'Body'])
+        for key, bm in merged.items():
+            writer.writerow([bm.get('title'),
+                             bm.get('link'),
+                             bm.get('image'),
+                             bm.get('description'),
+                             bm.get('read'),
+                             bm.get('created'),
+                             bm.get('tags__name'),
+                             bm.get('body')])
+        return response
     return render(request, "settings/dataportability.html")
 
 
