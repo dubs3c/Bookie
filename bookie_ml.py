@@ -12,11 +12,11 @@ nltk.download('wordnet')
 from nltk.corpus import wordnet as wn
 
 def synonymous(word1):
-  synonyms = []  
+  synonyms = []
   
   for syn in wn.synsets(word1):
     for l in syn.lemmas():
-      synonyms.append(l.name())  
+      synonyms.append(l.name())
 
   synonyms = (list(synonyms))
 
@@ -107,7 +107,7 @@ def final_tagger(soup_text,stop_words, W0 = 1, W1 = 0.00025, W7 = 0.1, W8 =50):
 
 
 
-  fd = nltk.FreqDist(final_sentence)
+  #fd = nltk.FreqDist(final_sentence)
   
 
 
@@ -332,7 +332,7 @@ def spider(url, weights = [1, 0.0025, 0.01, 0, 0, 0, 0, 0.1, 50, 1, 1, 10, 1]):
   
   tags = tags[:5]
   for i in tri:
-    if (i[0][0] + ' ' + i[0][1]) not in tags: 
+    if (i[0][0] + ' ' + i[0][1]) not in tags:
       tags.append(i[0][0] + ' ' + i[0][1])
     if (i[0][1] + ' ' + i[0][2]) not in tags:
       tags.append(i[0][1] + ' ' + i[0][2])
@@ -342,7 +342,6 @@ def spider(url, weights = [1, 0.0025, 0.01, 0, 0, 0, 0, 0.1, 50, 1, 1, 10, 1]):
     if (i[0][0] + ' ' + i[0][1]) not in tags:
       tags.append(i[0][0] + ' ' + i[0][1])
 
-  
   return tags
 
 wot = [1, 0.0025, 0.01, 0, 0, 0, 0, 0.1, 50, 1, 1, 10, 1]
