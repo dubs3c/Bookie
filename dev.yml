@@ -30,7 +30,7 @@ services:
 
   celery-beat:
     build: .
-    command: python -m celery beat -A bookie --loglevel=DEBUG -S django
+    command: python -m celery beat -A bookie --pidfile= --loglevel=DEBUG -S django
     depends_on:
       - postgres
       - redis
