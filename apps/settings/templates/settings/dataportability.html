@@ -2,6 +2,10 @@
 {% block settings %}
 
 <h3>Data Portability</h3>
-<p>Coming soon...</p>
-
+<p>If you want to export all your bookmarks and import them to an other service, you can do so below. The downloaded
+    file will be a comma separated file (csv).</p>
+<form action="{% url 'settings:data_portability' %}" method="post">
+    {% csrf_token  %}
+    <button type="submit" class="btn btn-primary">Export your bookmarks!</button>
+</form>
 {% endblock %}

@@ -10,7 +10,7 @@ EMAIL_PORT = os.environ.get("EMAIL_PORT")
 EMAIL_SENDER = os.environ.get("EMAIL_SENDER")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-EMAIL_USE_SSL = True
+EMAIL_USE_TLS = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '0@#t#6sv7c)975k16xmb#6$=##7#e3=$#=b7lbo51e^ku^!7*p'
