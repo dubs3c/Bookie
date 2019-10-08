@@ -42,7 +42,7 @@ $(function(){
     }
     
     function addTags() {
-      //clearTags();
+      clearTags();
       tags.slice().reverse().forEach(tag => {
         tagContainer.prepend(createTag(tag));
         var csrftoken = $("[name=csrfmiddlewaretoken]").val();
