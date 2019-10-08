@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
 
-    $(".infinitive-scroll").infiniteScroll({
+     $(".infinitive-scroll").infiniteScroll({
         // options
         path: ".pagination__next",
         append: ".postcard",
@@ -9,6 +9,12 @@ $(document).ready(function() {
         status: ".page-load-status",
         hideNav: ".pagination"
     });
+
+    $(".tag-button").click(function() {
+        $(this).toggleClass("tag-active");
+    });
+
+    setTagsFromURL();
 
 });
 
@@ -28,14 +34,50 @@ function send_ajax(data, url, callback) {
 
 
 function filter_on_tags(tag){
-
-
+    var list = [];
+    $(".tags span").map(function() {
+        if ($(this).hasClass("tag-active")) {
+            list.push(this.innerHTML);
+        } else {
+            console.log(this.className);
+        }
+    })
+    var query = list.join("|");
+    console.log(query);
+    var url = new URL(window.location.href);
+    url.searchParams.set('tags', query);
+    window.location.replace(url);
 }
 
 
-function is_tag_active() {
-
+function getFilterTagsFromURL(sParam="tags") {
+    var query = "";
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam) {
+            query = decodeURIComponent(sParameterName[1]);
+            break;
+        }
+    }
+    return query.split("|");
 }
+
+
+function setTagsFromURL() {
+    tags = getFilterTagsFromURL();
+    $(".tag-button").map(function() {
+        var key = $(this).text().replace(" ", "+");
+        console.log(key);
+        if (key) {
+            if (tags.includes(key)) {
+                $(this).addClass("tag-active");
+            }
+        }
+    })
+}
+
 
 function delete_bookmark(bookmarkId) {
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
