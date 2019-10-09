@@ -3,6 +3,7 @@ Contains all the dashboard views
 """
 
 import logging
+import urllib.parse
 
 from django.http import HttpResponse, QueryDict
 from django.shortcuts import render
@@ -42,7 +43,7 @@ def dashboard(request):
         bookmarks = Bookmarks.objects.filter(user=request.user).order_by("-created")
 
     if tag_filter:
-        tags = tag_filter.split("|")
+        tags = urllib.parse.unquote(tag_filter).split("|")
         for tag in tags:
             bookmarks = bookmarks.filter(tags__name__iexact=f"{tag}")
 

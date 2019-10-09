@@ -37,13 +37,10 @@ function filter_on_tags(tag){
     var list = [];
     $(".tags span").map(function() {
         if ($(this).hasClass("tag-active")) {
-            list.push(this.innerHTML);
-        } else {
-            console.log(this.className);
+            list.push(encodeURIComponent(this.innerHTML));
         }
     })
     var query = list.join("|");
-    console.log(query);
     var url = new URL(window.location.href);
     url.searchParams.set('tags', query);
     window.location.replace(url);
@@ -61,15 +58,14 @@ function getFilterTagsFromURL(sParam="tags") {
             break;
         }
     }
-    return query.split("|");
+    return decodeURIComponent(query).split("|");
 }
 
 
 function setTagsFromURL() {
     tags = getFilterTagsFromURL();
     $(".tag-button").map(function() {
-        var key = $(this).text().replace(" ", "+");
-        console.log(key);
+        var key = $(this).html();
         if (key) {
             if (tags.includes(key)) {
                 $(this).addClass("tag-active");
