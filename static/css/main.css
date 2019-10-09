@@ -124,5 +124,6 @@ footer {
 }
 
 .tag-active {
-    border: 1px solid red;
+    background: #3807ff;
+    color: white;
 }
