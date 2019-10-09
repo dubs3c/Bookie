@@ -1,4 +1,16 @@
 
+function setTagsFromURL() {
+    var tags = getFilterTagsFromURL();
+    $(".tag-button").map(function() {
+        var key = $(this).html();
+        if (key) {
+            if (tags.includes(key)) {
+                $(this).addClass("tag-active");
+            }
+        }
+    });
+}
+
 $(document).ready(function() {
 
      $(".infinitive-scroll").infiniteScroll({
@@ -33,7 +45,7 @@ function send_ajax(data, url, callback) {
 }
 
 
-function filter_on_tags(tag){
+function filterOnTags(tag){
     var list = [];
     $(".tags span").map(function() {
         if ($(this).hasClass("tag-active")) {
@@ -42,7 +54,7 @@ function filter_on_tags(tag){
     })
     var query = list.join("|");
     var url = new URL(window.location.href);
-    url.searchParams.set('tags', query);
+    url.searchParams.set("tags", query);
     window.location.replace(url);
 }
 
@@ -50,28 +62,15 @@ function filter_on_tags(tag){
 function getFilterTagsFromURL(sParam="tags") {
     var query = "";
     var sPageURL = window.location.search.substring(1);
-    var sURLVariables = sPageURL.split('&');
+    var sURLVariables = sPageURL.split("&");
     for (var i = 0; i < sURLVariables.length; i++) {
-        var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam) {
+        var sParameterName = sURLVariables[i].split("=");
+        if (sParameterName[0] === sParam) {
             query = decodeURIComponent(sParameterName[1]);
             break;
         }
     }
     return decodeURIComponent(query).split("|");
-}
-
-
-function setTagsFromURL() {
-    tags = getFilterTagsFromURL();
-    $(".tag-button").map(function() {
-        var key = $(this).html();
-        if (key) {
-            if (tags.includes(key)) {
-                $(this).addClass("tag-active");
-            }
-        }
-    })
 }
 
 
