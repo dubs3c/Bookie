@@ -116,3 +116,14 @@ footer {
     max-width: 100%;
     height: 256px;
 }
+
+.row .tags .tag:hover {
+    background: #2a2c2d;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+
+.tag-active {
+    background: #3807ff;
+    color: white;
+}
