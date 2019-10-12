@@ -1,16 +1,44 @@
 
-$(document).ready(function() {
-
-    $(".infinitive-scroll").infiniteScroll({
-        // options
-        path: ".pagination__next",
-        append: ".postcard",
-        history: false,
-        status: ".page-load-status",
-        hideNav: ".pagination"
+function filterOnTags(tag){
+    var list = [];
+    $(".tags span").map(function() {
+        if ($(this).hasClass("tag-active")) {
+            list.push(encodeURIComponent(this.innerHTML));
+        }
     });
+    var query = list.join("|");
+    var url = new URL(window.location.href);
+    url.searchParams.set("tags", query);
+    window.location.replace(url);
+}
 
-});
+
+function getFilterTagsFromURL(sParam="tags") {
+    var query = "";
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split("&");
+    for (var i = 0; i < sURLVariables.length; i++) {
+        var sParameterName = sURLVariables[i].split("=");
+        if (sParameterName[0] === sParam) {
+            query = decodeURIComponent(sParameterName[1]);
+            break;
+        }
+    }
+    return decodeURIComponent(query).split("|");
+}
+
+
+function setTagsFromURL() {
+    var tags = getFilterTagsFromURL();
+    $(".tag-button").map(function() {
+        var key = $(this).html();
+        if (key) {
+            if (tags.includes(key)) {
+                $(this).addClass("tag-active");
+            }
+        }
+    });
+}
 
 
 function send_ajax(data, url, callback) {
@@ -63,3 +91,22 @@ function generate_telegram_code() {
         $("#secretcode").removeClass("invisible");
     });
 }
+
+$(document).ready(function() {
+
+     $(".infinitive-scroll").infiniteScroll({
+        // options
+        path: ".pagination__next",
+        append: ".postcard",
+        history: false,
+        status: ".page-load-status",
+        hideNav: ".pagination"
+    });
+
+    $(".tag-button").click(function() {
+        $(this).toggleClass("tag-active");
+    });
+
+    setTagsFromURL();
+
+});

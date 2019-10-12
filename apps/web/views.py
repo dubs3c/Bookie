@@ -3,6 +3,7 @@ Contains all the dashboard views
 """
 
 import logging
+import urllib.parse
 
 from django.http import HttpResponse, QueryDict
 from django.shortcuts import render
@@ -19,6 +20,7 @@ from utils.web import is_url, parse_article
 
 LOGGER = logging.getLogger(__name__)
 
+
 def index(request):
     """ index page """
     if request.user.is_authenticated:
@@ -31,6 +33,7 @@ def dashboard(request):
     """ Dashboard page """
     query_param = request.GET.get("filter")
     page_id = request.GET.get("page")
+    tag_filter = request.GET.get("tags")
     if query_param:
         if query_param == "unread":
             bookmarks = Bookmarks.objects.filter(user=request.user, read=False).order_by("-created")
@@ -39,12 +42,18 @@ def dashboard(request):
     else:
         bookmarks = Bookmarks.objects.filter(user=request.user).order_by("-created")
 
+    if tag_filter:
+        tags = urllib.parse.unquote(tag_filter).split("|")
+        for tag in tags:
+            bookmarks = bookmarks.filter(tags__name__iexact=f"{tag}")
+
     paginator = Paginator(bookmarks, 10)
     if page_id:
         page = paginator.get_page(page_id)
     else:
         page = paginator.get_page(1)
-    context = {"bookmarks": page}
+    tags = BookmarkTags.objects.all().filter(bookmarks__user=request.user).order_by("name").distinct()
+    context = {"bookmarks": page, "tags": tags}
     return render(request, "web/index.html", context)
 
 
