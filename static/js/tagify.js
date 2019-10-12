@@ -19,8 +19,6 @@ $(function(){
     const tagContainer = document.querySelector('.tag-container');
     const input = document.querySelector('.tag-container input');
     
-    let tags = [];
-    
     function createTag(label) {
       const div = document.createElement('div');
       div.setAttribute('class', 'tag');
@@ -35,15 +33,7 @@ $(function(){
       return div;
     }
     
-    function clearTags() {
-      document.querySelectorAll('.tag').forEach(tag => {
-        tag.parentElement.removeChild(tag);
-      });
-    }
-    
-    function addTags() {
-      //clearTags();
-      tags.slice().reverse().forEach(tag => {
+    function addTag(tag) {
         tagContainer.prepend(createTag(tag));
         var csrftoken = $("[name=csrfmiddlewaretoken]").val();
         var url = "tag/" + $(".bookmark_bm_id").text();
@@ -53,37 +43,33 @@ $(function(){
         } else {
           send_ajax("POST", {"tag": tag, "csrfmiddlewaretoken": csrftoken}, url)
         }
-      });
     }
     
     input.addEventListener('keyup', (e) => {
         if (e.key === 'Enter') {
-          e.target.value.split(',').forEach(tag => {
-            tags.push(tag);  
-          });
+          e.target.value
+            .split(',')
+            .forEach(tag => {
+              addTag(tag);  
+            });
           
-          addTags();
           input.value = '';
         }
     });
+    
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
     document.addEventListener('click', (e) => {
       console.log(e.target.tagName);
       if (e.target.tagName === 'I') {
         const tagLabel = e.target.getAttribute('data-item');
-        const index = tags.indexOf(tagLabel);
         var tag = e.target.parentNode
         tag.remove();
         
         var url = "tag/" + $(".bookmark_bm_id").text();
         send_ajax("DELETE", {"tag": tagLabel, "csrfmiddlewaretoken": csrftoken}, url);
-        tags = [...tags.slice(0, index), ...tags.slice(index+1)];
-        addTags();    
       }
     })
     
     input.focus();
-
-
   }
 });
