@@ -25,7 +25,7 @@ $(function(){
       const div = document.createElement('div');
       div.setAttribute('class', 'tag');
       const span = document.createElement('span');
-      span.innerHTML = label;
+      span.textContent = label;
       const closeIcon = document.createElement('i');
       closeIcon.innerHTML = 'x';
       closeIcon.setAttribute('class', 'material-icons');
