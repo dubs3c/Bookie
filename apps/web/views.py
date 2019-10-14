@@ -36,9 +36,13 @@ def dashboard(request):
     tag_filter = request.GET.get("tags")
     if query_param:
         if query_param == "unread":
-            bookmarks = Bookmarks.objects.filter(user=request.user, read=False).order_by("-created")
+            bookmarks = Bookmarks.objects.filter(
+                user=request.user, read=False
+            ).order_by("-created")
         if query_param == "read":
-            bookmarks = Bookmarks.objects.filter(user=request.user, read=True).order_by("-created")
+            bookmarks = Bookmarks.objects.filter(user=request.user, read=True).order_by(
+                "-created"
+            )
     else:
         bookmarks = Bookmarks.objects.filter(user=request.user).order_by("-created")
 
@@ -52,7 +56,12 @@ def dashboard(request):
         page = paginator.get_page(page_id)
     else:
         page = paginator.get_page(1)
-    tags = BookmarkTags.objects.all().filter(bookmarks__user=request.user).order_by("name").distinct()
+    tags = (
+        BookmarkTags.objects.all()
+        .filter(bookmarks__user=request.user)
+        .order_by("name")
+        .distinct()
+    )
     context = {"bookmarks": page, "tags": tags}
     return render(request, "web/index.html", context)
 
@@ -60,7 +69,11 @@ def dashboard(request):
 def view_bookmark(request, bookmark_id):
     """ View a specific bookmark """
     bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
-    return render(request, "web/bookmark.html", {"bookmark": bookmark, 'body_class': "bookmark-detail"})
+    return render(
+        request,
+        "web/bookmark.html",
+        {"bookmark": bookmark, "body_class": "bookmark-detail"},
+    )
 
 
 def bookmark_iframe(request, bookmark_id):
@@ -68,12 +81,21 @@ def bookmark_iframe(request, bookmark_id):
     bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
     return render(request, "web/bookmark_sandbox.html", {"bookmark": bookmark})
 
+
 def add_bookmark_tag(request, bookmark_id):
     """ Add a tag for a given bookmark """
     if request.method == "POST":
-        bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
         tag = request.POST.get("tag")
-        bookmark_tag, bookmark_tag_created = BookmarkTags.objects.get_or_create(name=tag)
+        if len(tag) > 30:
+            return HttpResponse(
+                "The tag can be maximum 30 characters",
+                status=401,
+                content_type="application/json",
+            )
+        bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
+        bookmark_tag, bookmark_tag_created = BookmarkTags.objects.get_or_create(
+            name=tag
+        )
         bookmark.tags.add(bookmark_tag)
         return HttpResponse(status=201)
 
@@ -81,11 +103,17 @@ def add_bookmark_tag(request, bookmark_id):
         req = QueryDict(request.body)
         tag = req.get("tag")
         bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
-        bookmark_tag = get_object_or_404(BookmarkTags, name=tag, bookmarks__user=request.user, bookmarks__bm_id=bookmark_id)
+        bookmark_tag = get_object_or_404(
+            BookmarkTags,
+            name=tag,
+            bookmarks__user=request.user,
+            bookmarks__bm_id=bookmark_id,
+        )
         bookmark.tags.remove(bookmark_tag)
         return HttpResponse(status=200)
 
     return HttpResponse(status=405)
+
 
 def settings(request):
     """ Settings page """
@@ -99,11 +127,14 @@ def add_bookmark(request):
         data = req_data.get("data")
         if is_url(data):
             parsed_html = parse_article(data)
-            Bookmarks.objects.create(user=request.user, link=data,
-                                     description=parsed_html["description"],
-                                     title=parsed_html["title"],
-                                     image=parsed_html["image"],
-                                     body=parsed_html["body"])
+            Bookmarks.objects.create(
+                user=request.user,
+                link=data,
+                description=parsed_html["description"],
+                title=parsed_html["title"],
+                image=parsed_html["image"],
+                body=parsed_html["body"],
+            )
             return HttpResponse(status=200)
         else:
             Bookmarks.objects.create(user=request.user, link=data)
@@ -126,6 +157,7 @@ def delete_bookmark(request):
 
     return HttpResponse("bow chicka bow wow", content_type="text/plain")
 
+
 def mark_read(request):
     """ Mark a bookmark as read """
     if request.method == "POST":
@@ -142,7 +174,6 @@ def mark_read(request):
 
         bookmark.save()
         return HttpResponse(status=200)
-
 
     return HttpResponse("Introducing, neals...", content_type="text/plain")
 
@@ -177,6 +208,7 @@ def user_logout(request):
     logout(request)
     return redirect(reverse("login"))
 
+
 def register(request):
     """ Register a new user """
     if request.user.is_authenticated:
@@ -189,7 +221,9 @@ def register(request):
             messages.success(request, "You have successfully registered, please login.")
             return redirect(reverse("login"))
         else:
-            return render(request, "registration/registration.html", context={"form": form})
+            return render(
+                request, "registration/registration.html", context={"form": form}
+            )
 
     if request.method == "GET":
         form = RegistrationForm()
