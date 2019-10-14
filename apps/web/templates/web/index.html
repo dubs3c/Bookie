@@ -18,6 +18,7 @@
                     <div class="input-group mb-3">
                         <input type="text" name="add_bookmark_input" class="form-control" placeholder="Enter a URL or some text" aria-label="URL" aria-describedby="button-addon2">
                         <div class="input-group-append">
+                            {% csrf_token %}
                             <button class="btn btn-dark" type="button" id="save_link" onclick="addBookmark()">Save</button>
                         </div>
                     </div>
@@ -28,6 +29,7 @@
                     </div>
                 </div>
             </div>
+            {% if tags %}
             <div class="row">
                 <div class="col tags">
                     <h5>Tags</h5>
@@ -41,6 +43,7 @@
                     <button class="btn btn-primary btn-sm mt-2" type="button" id="filterOnTag" onclick="filterOnTags()">Filter on tag</button>
                 </div>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
