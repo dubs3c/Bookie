@@ -9,7 +9,7 @@ cffi==1.12.2
 chardet==3.0.4
 cryptography==2.6.1
 cssselect==1.0.3
-Django==2.2.8
+Django==2.2.9
 django-celery-beat==1.4.0
 django-timezone-field==3.0
 fabric==2.4.0
