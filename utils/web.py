@@ -8,6 +8,7 @@ import requests
 from requests.exceptions import Timeout
 from readability import Document
 from urllib.parse import urlparse
+from uuid import UUID
 
 
 def parse_article(url: str) -> Dict:
@@ -102,3 +103,17 @@ def is_url_blacklisted(url: str) -> bool:
     if domain in blacklist:
         return True
     return False
+
+
+def is_valid_uuid(uuid: str, version=4):
+    """
+    Check if uuid is valid.
+    :param uuid: The uuid to test
+    :return: True if valid, False if not
+    """
+    try:
+        uuid_obj = UUID(uuid, version=version)
+    except ValueError:
+        return False
+
+    return str(uuid_obj) == uuid
