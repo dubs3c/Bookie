@@ -6,7 +6,7 @@ from django.http import HttpResponse
 
 def is_authenticated(get_response):
     """ Check if user is authenticated """
-    whitelist = ["/login/", "/logout/", "/register/", "/api/"]
+    whitelist = ["/login/", "/logout/", "/register/", "/api/", "/activate/"]
 
     def middleware(request):
 

@@ -2,20 +2,24 @@
 Contains all the dashboard views
 """
 
+from datetime import timedelta
 import logging
 import urllib.parse
 
-from django.http import HttpResponse, QueryDict
+from django.http import HttpResponse, QueryDict, Http404
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User as AuthUser
 from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.utils import timezone
 
 from .forms import RegistrationForm
-from .models import Bookmarks, BookmarkTags
-from utils.web import is_url, parse_article
+from .models import Bookmarks, BookmarkTags, ActivationTokens
+from .tasks import send_activation_code
+from utils.web import is_url, parse_article, is_valid_uuid
 
 
 LOGGER = logging.getLogger(__name__)
@@ -193,11 +197,11 @@ def user_login(request):
             return render(request, "registration/login.html", context=data)
 
         user = authenticate(request, username=username, password=password)
-        if user is not None:
+        if user is not None and user.is_active == True:
             login(request, user)
             return redirect(reverse("web:dashboard"))
         else:
-            data = {"error": "Wrong username/password"}
+            data = {"error": "Wrong username/password or account is not activated"}
             return render(request, "registration/login.html", context=data)
     if request.method == "GET":
         return render(request, "registration/login.html")
@@ -217,8 +221,13 @@ def register(request):
     if request.method == "POST":
         form = RegistrationForm(data=request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "You have successfully registered, please login.")
+            user = form.save()
+            user.is_active = False
+            user.save()
+            token = ActivationTokens.objects.create(user=user)
+            token.save()
+            send_activation_code.delay(user.id)
+            messages.success(request, "You have successfully registered, please activate your account by clicking the link sent to you.")
             return redirect(reverse("login"))
         else:
             return render(
@@ -228,3 +237,21 @@ def register(request):
     if request.method == "GET":
         form = RegistrationForm()
         return render(request, "registration/registration.html", context={"form": form})
+
+def activate_account(request, activation):
+    if request.user.is_authenticated:
+        return redirect(reverse("web:dashboard"))
+
+    if not is_valid_uuid(activation):
+        raise Http404()
+
+    token = get_object_or_404(ActivationTokens, code=activation, user__is_active=False)
+
+    if timezone.now() > (token.created + timedelta(hours=12)):
+        AuthUser.objects.filter(id=token.user.user.id).delete()
+        raise Http404()
+
+    token.user.is_active = True
+    token.user.save()
+    messages.success(request, "You have successfully activated your account, please login.")
+    return redirect(reverse("login"))

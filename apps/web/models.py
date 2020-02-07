@@ -1,6 +1,7 @@
 """ models """
 
 import pytz
+import uuid
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -22,9 +23,14 @@ class Profile(User):
     def create_or_update_user_profile(sender, instance, created, **kwargs):
         """ Automatically create a profile when a user is registered """
         if created:
-            Profile.objects.create(user=instance)
+            profile = Profile.objects.create(user=instance)
+            profile.save()
         instance.profile.save()
 
+class ActivationTokens(models.Model):
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    code = models.UUIDField(default=uuid.uuid4)
+    created = models.DateTimeField(auto_now=True)
 
 class BookmarkTags(models.Model):
     """ Contains Bookmarks' tags """
