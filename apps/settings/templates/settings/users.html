@@ -3,12 +3,15 @@
 {% load static %}
 
 {% if users%}
+    {% with nrusers=users|length %}
+        <p>There {% if nrusers == 1 %} is {% else %} are {% endif %} {{nrusers}} user{{nrusers|pluralize}} registered.</p>
+    {% endwith %}
+
     <table class="table table-striped">
     <form>
         {% csrf_token %}
     <thead>
     <tr>
-        <th scope="col">#</th>
         <th scope="col">Username</th>
         <th scope="col">Active</th>
         <th scope="col">Bookmarks</th>
@@ -20,7 +23,6 @@
     <tbody>
     {% for user in users %}
         <tr>
-            <th scope="row">{{user.user__id}}</th>
             <td>{{user.user__username}}</td>
             <td>{{user.user__is_active}}</td>
             <td>{{user.id__count}}</td>
