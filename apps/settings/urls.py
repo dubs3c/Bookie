@@ -11,7 +11,19 @@ urlpatterns = [
     path("change_password", views.change_password, name="change_password"),
     path("integrations", views.integrations, name="integrations"),
     path("portability", views.data_portability, name="data_portability"),
-    path("integrations/<str:integration>", views.integration_detail, name="integration_detail"),
+    path(
+        "integrations/<str:integration>",
+        views.integration_detail,
+        name="integration_detail",
+    ),
     path("telegram", views.integration_telegram, name="telegram_integration"),
-    path("telegram/delete", views.integration_telegram_delete, name="integration_telegram_delete")
+    path(
+        "telegram/delete",
+        views.integration_telegram_delete,
+        name="integration_telegram_delete",
+    ),
+    path("users", views.users, name="users"),
+    path("users/<int:user_id>/delete", views.delete_user, name="users"),
+    path("users/<int:user_id>/deactivate", views.deactivate_user, name="users"),
+    path("site", views.site, name="site"),
 ]
