@@ -94,7 +94,7 @@ function generate_telegram_code() {
 
 function deleteUser() {
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
-    var userID = $(".modal-body input").val()
+    var userID = $(".modal-body input").val();
     var data = {"csrfmiddlewaretoken": csrftoken};
     send_ajax(data, "/settings/users/"+userID+"/delete", function(result){
         location.reload();
@@ -126,13 +126,13 @@ $(document).ready(function() {
 
     setTagsFromURL();
 
-    $('#deleteUserModal').on('show.bs.modal', function (event) {
+    $("#deleteUserModal").on("show.bs.modal", function (event) {
         var button = $(event.relatedTarget); // Button that triggered the modal
-        var username = button.data('username');
-        var userID = button.data('userid');
+        var username = button.data("username");
+        var userID = button.data("userid");
         var modal = $(this);
-        modal.find('.modal-body span').text(username);
-        modal.find('.modal-body input').val(userID);
-      })
+        modal.find(".modal-body span").text(username);
+        modal.find(".modal-body input").val(userID);
+      });
 
 });
