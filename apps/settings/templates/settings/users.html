@@ -1,0 +1,67 @@
+{% extends 'settings/settings.html' %}
+{% block settings %}
+{% load static %}
+
+{% if users%}
+    <table class="table table-striped">
+    <form>
+        {% csrf_token %}
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Username</th>
+        <th scope="col">Active</th>
+        <th scope="col">Bookmarks</th>
+        <th scope="col">Admin</th>
+        <th scope="col">Last Login</th>
+        <th scope="col">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for user in users %}
+        <tr>
+            <th scope="row">{{user.user__id}}</th>
+            <td>{{user.user__username}}</td>
+            <td>{{user.user__is_active}}</td>
+            <td>{{user.id__count}}</td>
+            <td>{{user.user__is_superuser}}</td>
+            <td>{{user.user__last_login}}</td>
+            <td><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteUserModal" data-username="{{user.user__username}}" data-userid="{{user.user__id}}">Delete</button> <button type="button" class="btn btn-warning btn-sm" onclick="deactivateUser('{{user.user__id}}')">Deactivate</button></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </form>
+    </table>
+
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+        <form>
+            {% csrf_token %}
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteUserModalLabel">Delete user</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    <input type="hidden" class="userIDToDelete" value="">
+                    Are you sure you want to delete <strong><span></span></strong>?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                        <button type="button" class="btn btn-success" onclick="deleteUser()">Yes</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% else %}
+
+<p>No users found</p>
+
+{% endif %}
+
+
+{% endblock %}

@@ -7,11 +7,13 @@ import logging
 import pytz
 import csv
 
+from django.db.models import Count
+from django.http import Http404
 from django.utils.crypto import get_random_string
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
 from django.template.loader import get_template
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
@@ -28,6 +30,7 @@ from .models import Telegram
 
 LOGGER = logging.getLogger(__name__)
 
+
 def settings(request):
     """ Settings index page """
     try:
@@ -42,7 +45,9 @@ def settings(request):
     errors = []
 
     if request.method == "GET":
-        profile_form = ProfileForm(user=request.user.profile, instance=request.user.profile)
+        profile_form = ProfileForm(
+            user=request.user.profile, instance=request.user.profile
+        )
         cron_form = CronForm(user=request.user.profile)
 
     if request.method == "POST":
@@ -60,10 +65,19 @@ def settings(request):
         else:
             errors.append(cron_form.errors)
 
-    return render(request, "settings/account.html",
-                  context={"change_pw_form": change_pw_form, "profile_form": profile_form,
-                           "cron_form": cron_form, "timezones": timezones,
-                           "cron_expression": cron_expression, "formerrors": errors})
+    return render(
+        request,
+        "settings/account.html",
+        context={
+            "change_pw_form": change_pw_form,
+            "profile_form": profile_form,
+            "cron_form": cron_form,
+            "timezones": timezones,
+            "cron_expression": cron_expression,
+            "formerrors": errors,
+        },
+    )
+
 
 def change_password(request):
     """ Change user password endpoint """
@@ -96,9 +110,21 @@ def data_portability(request):
 
     if request.method == "POST":
         user = request.user
-        bookmarks = Bookmarks.objects.filter(user=user)\
-            .values('bm_id', 'title', 'link', 'image', 'description', 'read', 'created', 'tags__name', 'body')\
-            .order_by('-id')
+        bookmarks = (
+            Bookmarks.objects.filter(user=user)
+            .values(
+                "bm_id",
+                "title",
+                "link",
+                "image",
+                "description",
+                "read",
+                "created",
+                "tags__name",
+                "body",
+            )
+            .order_by("-id")
+        )
 
         merged = {}
         if bookmarks:
@@ -114,21 +140,25 @@ def data_portability(request):
                         x["tags__name"] += f", {tags}"
                         merged[item["bm_id"]] = x
 
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] =\
-            'attachment; filename="bookie_output.csv"'
-        writer = csv.writer(response, delimiter=';')
-        writer.writerow(['Title', 'Link', 'Image', 'Description',
-                         'Read', 'Created', 'Tags', 'Body'])
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="bookie_output.csv"'
+        writer = csv.writer(response, delimiter=";")
+        writer.writerow(
+            ["Title", "Link", "Image", "Description", "Read", "Created", "Tags", "Body"]
+        )
         for key, bm in merged.items():
-            writer.writerow([bm.get('title'),
-                             bm.get('link'),
-                             bm.get('image'),
-                             bm.get('description'),
-                             bm.get('read'),
-                             bm.get('created'),
-                             bm.get('tags__name'),
-                             bm.get('body')])
+            writer.writerow(
+                [
+                    bm.get("title"),
+                    bm.get("link"),
+                    bm.get("image"),
+                    bm.get("description"),
+                    bm.get("read"),
+                    bm.get("created"),
+                    bm.get("tags__name"),
+                    bm.get("body"),
+                ]
+            )
         return response
     return render(request, "settings/dataportability.html")
 
@@ -194,3 +224,51 @@ def delete_account(request):
         return redirect(reverse("login"))
 
     return redirect(reverse("settings:index"))
+
+
+def users(request):
+    if not request.user.is_superuser:
+        raise Http404()
+
+    users = (
+        Bookmarks.objects.values(
+            "user__id",
+            "user__username",
+            "user__is_active",
+            "user__is_superuser",
+            "user__last_login",
+        )
+        .annotate(Count("id"))
+        .order_by("user__id")
+    )
+    return render(request, "settings/users.html", context={"users": users})
+
+
+def delete_user(request, user_id):
+    if not request.user.is_superuser:
+        raise Http404()
+    if request.method == "POST":
+        user = get_object_or_404(User, id=user_id)
+        user.delete()
+        return HttpResponse(status=200)
+    else:
+        raise Http404()
+
+
+def deactivate_user(request, user_id):
+    if not request.user.is_superuser:
+        raise Http404()
+    if request.method == "POST":
+        user = get_object_or_404(User, id=user_id)
+        user.is_active = False
+        user.save()
+        return HttpResponse(status=200)
+    else:
+        raise Http404()
+
+
+def site(request):
+    if not request.user.is_superuser:
+        raise Http404()
+
+    return render(request, "settings/site.html", context={})

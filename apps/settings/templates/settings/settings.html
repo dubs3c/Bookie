@@ -10,7 +10,14 @@
                     <li><a href="{% url 'settings:index' %}"><i class="fas fa-angle-right"></i> Account</a></li>
                     <li><a href="{% url 'settings:integrations' %}"><i class="fas fa-angle-right"></i> Integrations</a></li>
                     <li><a href="{% url 'settings:data_portability' %}"><i class="fas fa-angle-right"></i> Data Portability</a></li>
-                </ul>    
+                </ul>
+                {% if user.is_superuser %}
+                <h5> Admin</h5>
+                <ul>
+                    <li><a href="{% url 'settings:users' %}"><i class="fas fa-angle-right"></i> Users</a></li>
+                    <li><a href="{% url 'settings:site' %}"><i class="fas fa-angle-right"></i> Site</a></li>
+                </ul> 
+                {% endif %}   
             </div>
         </div>
 
