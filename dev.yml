@@ -42,13 +42,15 @@ services:
       - ".:/home/bookie/project/"
 
   postgres:
-    image: postgres:11.2-alpine
+    image: postgres:11.6-alpine
     environment:
       - POSTGRES_USER=bookie
       - POSTGRES_PASSWORD=asdf
       - POSTGRES_DB=bookie
     ports:
       - "0.0.0.0:5432:5432"
+    volumes:
+      - /var/lib/bookie/postgresql/data:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
