@@ -8,7 +8,7 @@ services:
     ports:
       - "127.0.0.1:8000:8000"
     volumes:
-      - ".:/home/bookie/project/"
+      - "./static:/home/bookie/project/static"
     env_file:
       - /root/bookie.env
       - /root/bookie.db.env
