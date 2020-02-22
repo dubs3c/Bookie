@@ -4,7 +4,7 @@ services:
   bookie:
     container_name: bookie-dev
     build: .
-    command: sh entrypoint.sh dev
+    command: bash entrypoint.sh dev
     ports:
       - "0.0.0.0:8000:8000"
     volumes:
