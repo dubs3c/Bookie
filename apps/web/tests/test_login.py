@@ -1,5 +1,7 @@
 """ tests """
 
+from unittest import mock
+
 from django.contrib.auth.hashers import make_password
 from django.test import TestCase
 from django.urls import reverse
@@ -36,9 +38,10 @@ class LoginTestCase(TestCase):
         response = self.client.post(self.login_url, data, follow=True)
 
         self.assertEqual(response.status_code, 200)
-        self.assertInHTML("Wrong username/password", response.content.decode())
+        self.assertContains(response, "Wrong username/password")
 
-    def test_registration(self):
+    @mock.patch('apps.web.tasks.send_activation_code.delay', return_value="")
+    def test_registration(self, mock_celery):
         """ Successfully register an account """
         data = {
             "username": "dabookieman",
@@ -48,6 +51,7 @@ class LoginTestCase(TestCase):
             }
         response = self.client.post(self.register_url, data, follow=True)
 
+        mock_celery.assert_called_once()
         self.assertRedirects(response, expected_url=reverse("login"))
         self.assertTrue(Profile.objects.filter(username="dabookieman").exists())
 
