@@ -4,11 +4,11 @@ services:
   bookie:
     container_name: bookie-prod
     build: .
-    command: bash -c "python manage.py migrate --settings=bookie.env.prod && python manage.py collectstatic --noinput --settings=bookie.env.prod && ~/.local/bin/gunicorn bookie.wsgi --env DJANGO_SETTINGS_MODULE=bookie.env.prod --config=gunicorn.config.py"
+    command: bash entrypoint.sh prod
     ports:
       - "127.0.0.1:8000:8000"
     volumes:
-      - ".:/home/bookie/project/"
+      - "./static:/home/bookie/project/static"
     env_file:
       - /root/bookie.env
       - /root/bookie.db.env
@@ -25,8 +25,6 @@ services:
     depends_on:
       - redis
       - postgres
-    volumes:
-      - ".:/home/bookie/project/"
 
   celery-beat:
     build: .
@@ -37,13 +35,13 @@ services:
     env_file:
       - /root/bookie.env
       - /root/bookie.db.env
-    volumes:
-      - ".:/home/bookie/project/"
 
   postgres:
-    image: postgres:11.2-alpine
+    image: postgres:11.6-alpine
     env_file:
       - /root/bookie.db.env
+    volumes:
+      - /var/lib/bookie/postgresql/data:/var/lib/postgresql/data
 
   redis:
     image: redis:5.0.3-alpine
