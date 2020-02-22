@@ -4,7 +4,7 @@ services:
   bookie:
     container_name: bookie-dev
     build: .
-    command: bash -c "python manage.py makemigrations --settings=bookie.env.dev && python manage.py migrate --settings=bookie.env.dev && python manage.py runserver 0.0.0.0:8000 --settings=bookie.env.dev"
+    command: sh entrypoint.sh dev
     ports:
       - "0.0.0.0:8000:8000"
     volumes:
