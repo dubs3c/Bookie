@@ -51,48 +51,22 @@
 
 <div class="infinitive-scroll">
     {% for bookmark in bookmarks %}
-    <div class="card mb-3 postcard" id="{{bookmark.bm_id}}">
+    <div class="mb-1" style="border-bottom: 1px solid rgb(236, 236, 236);" id="{{bookmark.bm_id}}">
         <div class="row">
-            <div class="col-md-6">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            {% if bookmark.image %}
-                            <img src="{{bookmark.image}}" style="max-width: 100%; margin-bottom: 15px" />
-                            {% else %}
-                                <div style="width: 100%; height: 280.86px; margin-bottom: 15px; background: whitesmoke">
-                                    <img src="{% static 'img/placeholder-img.png' %}" width="100%" height="280.86" />
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
 
-                    <div class="float-right">
-
-                    </div>
-                </div>
-
-            </div>
-            <div class="col-md-6">
-                <div class="card-body">
+            <div class="col-md-9">
                 {% if bookmark.title %}
-                    <h4 class="card-title"><a href="{{ bookmark.link }}" target="_blank">{{bookmark.title}}</a></h4>
+                    <h6 class="card-title"><a href="{{ bookmark.link }}" target="_blank" rel="noopener noreferrer">{{bookmark.title}}</a>
+                    <small style="color: rgb(185, 185, 185)"><p class="card-text">{{bookmark.link}}</p></small></h6>
                 {% endif %}
-                {% if bookmark.description %}
-                    <p class="card-text">{{bookmark.description}}</p>
-                    <p class="card-text"><small class="text-muted">{{bookmark.link}}</small></p>
-                {% else %}
-                    {% if bookmark.is_url %}
-                        <a href="{{bookmark.link}}"><p class="card-text">{{bookmark.link}}</p></a>
-                    {% else %}
-                        <p class="card-text">{{bookmark.link}}</p>
-                    {% endif %}
-                {% endif %}
+
 
                 {% for tag in bookmark.tags.all %}
                     <span class="badge tag">{{tag.name}}</span>
                 {% endfor %}
                 <!--<i class="fas fa-plus-circle"></i>-->
+            </div>
+            <div id="col-md-3">
 
                     <form>
                         {% csrf_token %}
@@ -107,7 +81,7 @@
                         {% endif %}
                             </small>
                     </form>
-                </div>
+
             </div>
         </div>
     </div>
