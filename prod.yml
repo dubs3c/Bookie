@@ -3,8 +3,8 @@ version: '3'
 services:
   bookie:
     container_name: bookie-prod
-    build: .
-    command: bash entrypoint.sh prod
+    image: dubs3c/bookie:latest
+    command: sh entrypoint.sh prod
     ports:
       - "127.0.0.1:8000:8000"
     volumes:
@@ -17,7 +17,7 @@ services:
       - redis
 
   celery-worker:
-    build: .
+    image: dubs3c/bookie:latest
     command: python -m celery worker -A bookie --concurrency=10 --loglevel=INFO
     env_file:
       - /root/bookie.env
@@ -27,7 +27,7 @@ services:
       - postgres
 
   celery-beat:
-    build: .
+    image: dubs3c/bookie:latest
     command: python -m celery beat -A bookie -S django --loglevel=INFO
     depends_on:
       - postgres

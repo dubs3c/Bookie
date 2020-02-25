@@ -9,3 +9,4 @@ fab_settings.py
 *.pid
 .idea/
 venv/
+env/
