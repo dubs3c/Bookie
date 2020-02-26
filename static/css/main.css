@@ -48,6 +48,11 @@ footer {
     background: #e8ecef;
     color: #4d5c6c;
 }
+
+.bookmarks .tag {
+    font-size: 0.7em;
+}
+
 .fa-plus-circle {
     color: #4d5c6c;
 }
@@ -126,4 +131,8 @@ footer {
 .tag-active {
     background: #3807ff;
     color: white;
+}
+
+.bookmarks h6 a {
+    color: #4e4e4e;
 }
