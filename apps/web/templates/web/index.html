@@ -49,24 +49,25 @@
 </div>
 
 
-<div class="infinitive-scroll">
+<div class="bookmarks">
     {% for bookmark in bookmarks %}
-    <div class="mb-1" style="border-bottom: 1px solid rgb(236, 236, 236);" id="{{bookmark.bm_id}}">
-        <div class="row">
-
-            <div class="col-md-9">
-                {% if bookmark.title %}
-                    <h6 class="card-title"><a href="{{ bookmark.link }}" target="_blank" rel="noopener noreferrer">{{bookmark.title}}</a>
-                    <small style="color: rgb(185, 185, 185)"><p class="card-text">{{bookmark.link}}</p></small></h6>
-                {% endif %}
+    <div class="mb-1 pb-2" style="border-bottom: 1px solid rgb(236, 236, 236);" id="{{bookmark.bm_id}}">
+        <div class="row justify-content-between pr-4">
 
 
-                {% for tag in bookmark.tags.all %}
-                    <span class="badge tag">{{tag.name}}</span>
-                {% endfor %}
-                <!--<i class="fas fa-plus-circle"></i>-->
-            </div>
-            <div id="col-md-3">
+                <div class="col-md-9">
+                    {% if bookmark.title %}
+                        <h6 class="card-title"><a href="{{ bookmark.link }}" target="_blank" rel="noopener noreferrer">{{bookmark.title}}</a>
+                        <small style="color: rgb(185, 185, 185)"><p class="card-text">{{bookmark.link}}</p></small></h6>
+                    {% endif %}
+
+
+                    {% for tag in bookmark.tags.all %}
+                        <span class="badge tag">{{tag.name}}</span>
+                    {% endfor %}
+                    <!--<i class="fas fa-plus-circle"></i>-->
+                </div>
+                <div id="col-md-3" class="mx-3">
 
                     <form>
                         {% csrf_token %}
@@ -81,8 +82,8 @@
                         {% endif %}
                             </small>
                     </form>
+                </div>
 
-            </div>
         </div>
     </div>
     {% endfor %}
@@ -100,7 +101,7 @@
 
 <div class="row">
     <div class="col">
-        <div class="pagination">
+        <div class="text-center">
             <span class="step-links">
                 {% if bookmarks.has_previous %}
                     <a href="?page=1{% if 'filter' in request.GET %}&filter={{ request.GET.filter }}{% endif %}">&laquo; first</a>
@@ -117,16 +118,6 @@
                 {% endif %}
             </span>
         </div>      
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-4 offset-md-4" style="text-align: center; margin: auto;">
-        <div class="page-load-status">
-            <p class="infinite-scroll-request">Loading...</p>
-            <button type="button" class="btn btn-light btn-block infinite-scroll-last" onclick="window.scrollTo(0,0);">End of content, go to the Top?</button>
-            <p class="infinite-scroll-error">No more pages to load</p>
-        </div>                   
     </div>
 </div>
 {% endif %}

@@ -55,7 +55,7 @@ def dashboard(request):
         for tag in tags:
             bookmarks = bookmarks.filter(tags__name__iexact=f"{tag}")
 
-    paginator = Paginator(bookmarks, 10)
+    paginator = Paginator(bookmarks, 15)
     if page_id:
         page = paginator.get_page(page_id)
     else:
@@ -227,7 +227,10 @@ def register(request):
             token = ActivationTokens.objects.create(user=user)
             token.save()
             send_activation_code.delay(user.id)
-            messages.success(request, "You have successfully registered, please activate your account by clicking the link sent to you.")
+            messages.success(
+                request,
+                "You have successfully registered, please activate your account by clicking the link sent to you.",
+            )
             return redirect(reverse("login"))
         else:
             return render(
@@ -237,6 +240,7 @@ def register(request):
     if request.method == "GET":
         form = RegistrationForm()
         return render(request, "registration/registration.html", context={"form": form})
+
 
 def activate_account(request, activation):
     if request.user.is_authenticated:
@@ -253,5 +257,7 @@ def activate_account(request, activation):
 
     token.user.is_active = True
     token.user.save()
-    messages.success(request, "You have successfully activated your account, please login.")
+    messages.success(
+        request, "You have successfully activated your account, please login."
+    )
     return redirect(reverse("login"))
