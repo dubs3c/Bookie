@@ -111,15 +111,6 @@ function deactivateUser(userid) {
 
 $(document).ready(function() {
 
-     $(".infinitive-scroll").infiniteScroll({
-        // options
-        path: ".pagination__next",
-        append: ".postcard",
-        history: false,
-        status: ".page-load-status",
-        hideNav: ".pagination"
-    });
-
     $(".tag-button").click(function() {
         $(this).toggleClass("tag-active");
     });
