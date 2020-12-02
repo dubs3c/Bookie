@@ -21,7 +21,7 @@ invoke==1.2.0
 jieba==0.39
 jieba3k==0.35.1
 kombu==4.5.0
-lxml==4.3.3
+lxml==4.6.2
 nltk==3.4.5
 paramiko==2.4.2
 Pillow==7.1.0
