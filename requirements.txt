@@ -7,7 +7,7 @@ celery==4.3.0
 certifi==2019.3.9
 cffi==1.12.2
 chardet==3.0.4
-cryptography==3.2
+cryptography==3.3.2
 cssselect==1.0.3
 Django==2.2.20
 django-celery-beat==1.4.0
