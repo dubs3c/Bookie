@@ -1,4 +1,4 @@
-amqp==2.4.2
+amqp==2.5.2
 asn1crypto==0.24.0
 bcrypt==3.1.6
 beautifulsoup4==4.8.0
@@ -20,7 +20,7 @@ idna==2.8
 invoke==1.2.0
 jieba==0.39
 jieba3k==0.35.1
-kombu==4.5.0
+kombu==4.6.7
 lxml==4.6.5
 nltk==3.4.5
 paramiko==2.4.2
@@ -35,7 +35,7 @@ pytz==2019.1
 PyYAML==5.4
 readability-lxml==0.7.1
 redis==3.2.1
-requests==2.21.0
+requests==2.27.1
 requests-file==1.4.3
 sentry-sdk==0.7.2
 six==1.12.0
