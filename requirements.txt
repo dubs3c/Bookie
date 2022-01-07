@@ -35,7 +35,7 @@ pytz==2019.1
 PyYAML==5.4
 readability-lxml==0.7.1
 redis==3.2.1
-requests==2.21.0
+requests==2.27.1
 requests-file==1.4.3
 sentry-sdk==0.7.2
 six==1.12.0
