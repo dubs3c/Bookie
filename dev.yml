@@ -4,7 +4,7 @@ services:
   bookie:
     container_name: bookie-dev
     build: .
-    command: bash entrypoint.sh dev
+    command: sh -cx "dos2unix -n entrypoint.sh tmp_ent && mv tmp_ent entrypoint.sh && bash entrypoint.sh dev"
     ports:
       - "0.0.0.0:8000:8000"
     volumes:
