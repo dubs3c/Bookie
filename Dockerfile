@@ -1,4 +1,4 @@
-FROM python:3.7.6-alpine
+FROM python:3.10.2-alpine3.15
 ENV PYTHONUNBUFFERED 1
 RUN apk --no-cache add --update                                         \
         --repository http://dl-3.alpinelinux.org/alpine/edge/testing/   \
