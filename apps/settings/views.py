@@ -7,7 +7,6 @@ import logging
 import pytz
 import csv
 
-from django.db.models import Count
 from django.http import Http404
 from django.utils.crypto import get_random_string
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
@@ -231,15 +230,13 @@ def users(request):
         raise Http404()
 
     users = (
-        Bookmarks.objects.values(
-            "user__id",
-            "user__username",
-            "user__is_active",
-            "user__is_superuser",
-            "user__last_login",
-        )
-        .annotate(Count("id"))
-        .order_by("user__id")
+        User.objects.raw('''
+            SELECT u.id, u.username, count(b.id) as bookmarks, u.is_active, u.is_superuser, u.last_login
+            FROM auth_user as u
+            LEFT JOIN web_bookmarks as b
+            ON b.user_id = u.id
+            GROUP BY u.id;
+        ''')
     )
     return render(request, "settings/users.html", context={"users": users})
 

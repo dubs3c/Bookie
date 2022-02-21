@@ -23,11 +23,11 @@
     <tbody>
     {% for user in users %}
         <tr>
-            <td>{{user.user__username}}</td>
-            <td>{{user.user__is_active}}</td>
-            <td>{{user.id__count}}</td>
-            <td>{{user.user__is_superuser}}</td>
-            <td>{{user.user__last_login}}</td>
+            <td>{{user.username}}</td>
+            <td>{{user.is_active}}</td>
+            <td>{% if user.bookmarks == null %}0{% else %} {{user.bookmarks}}{% endif %}</td>
+            <td>{{user.is_superuser}}</td>
+            <td>{{user.last_login}}</td>
             <td><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteUserModal" data-username="{{user.user__username}}" data-userid="{{user.user__id}}">Delete</button> <button type="button" class="btn btn-warning btn-sm" onclick="deactivateUser('{{user.user__id}}')">Deactivate</button></td>
         </tr>
     {% endfor %}
