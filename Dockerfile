@@ -8,4 +8,4 @@ USER bookie
 RUN mkdir /home/bookie/project
 WORKDIR /home/bookie/project
 COPY --chown=bookie . /home/bookie/project/
-RUN pip install -r requirements.txt --user && echo "export PATH=$(python -c 'import site; print(site.USER_BASE + "/bin")'):$PATH" >> ~/.bashrc
+RUN pip install -r requirements.txt -U --user && echo "export PATH=$(python -c 'import site; print(site.USER_BASE + "/bin")'):$PATH" >> ~/.bashrc
