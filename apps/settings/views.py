@@ -235,7 +235,8 @@ def users(request):
             FROM auth_user as u
             LEFT JOIN web_bookmarks as b
             ON b.user_id = u.id
-            GROUP BY u.id;
+            GROUP BY u.id
+            ORDER BY u.id;
         """
     )
     return render(request, "settings/users.html", context={"users": users})
