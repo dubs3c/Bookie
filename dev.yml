@@ -17,7 +17,7 @@ services:
 
   celery-worker:
     build: .
-    command: python -m celery worker -A bookie --concurrency=10 --loglevel=DEBUG
+    command: python -m celery -A bookie worker --concurrency=10 --loglevel=DEBUG
     environment:
       - POSTGRES_USER=bookie
       - POSTGRES_PASSWORD=asdf
@@ -30,7 +30,7 @@ services:
 
   celery-beat:
     build: .
-    command: python -m celery beat -A bookie --pidfile= --loglevel=DEBUG -S django
+    command: python -m celery -A bookie beat --pidfile= --loglevel=DEBUG -S django
     depends_on:
       - postgres
       - redis
