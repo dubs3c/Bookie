@@ -1,5 +1,5 @@
 """ web utils """
-
+import ipaddress
 from typing import Dict
 import re
 from lxml import html
@@ -23,7 +23,7 @@ def parse_article(url: str) -> Dict:
     data = {"title": "", "description": "", "image": "", "body": ""}
     try:
         headers = {'user-agent': 'Bookie/app'}
-        response = requests.get(https_upgrade(url), timeout=3, headers=headers)
+        response = requests.get(https_upgrade(url), timeout=3, headers=headers, verify=False)
     except Timeout:
         return data
 
@@ -49,13 +49,36 @@ def parse_article(url: str) -> Dict:
 
 def is_url(url: str) -> bool:
     """
-    Returns True if input is a URL
-    :param url: The URL sent by the user
-    :return: Return True if url is a URL, false if not
+    Verify that a given url is a valid url
+    :param domain: the url
+    :return: If valid or not
     """
-    regex = re.compile(r"http[s]?:\/\/[a-zA-z\.\-0-9]+\.[a-zA-Z]+")
-    exists = regex.search(url)
-    if exists:
+    try:
+        u = urlparse(url)
+    except ValueError:
+        return False
+
+    try:
+        int(u.netloc, 16)
+        return False
+    except ValueError:
+        pass
+
+    if (
+        u.netloc != ""
+        and u.scheme in ["http", "https"]
+        and u.hostname is not None
+        and len(u.hostname) < 63
+        and u.hostname != "localhost"
+        and u.username is None
+        and u.password is None
+    ):
+        try:
+            ipaddress.ip_address(u.hostname)
+            return False
+        except ValueError:
+            pass
+
         return True
 
     return False
@@ -68,22 +91,15 @@ def https_upgrade(url: str) -> str:
     :return: The HTTP or HTTPS version
     """
     headers = {'user-agent': 'Bookie/app'}
-    https_url = ""
-    if url.lower().startswith("http://"):
-        to_https = re.compile(re.escape('http://'), re.IGNORECASE)
-        https_url = to_https.sub("https://", url)
-
-    elif not url.lower().startswith("https://"):
-        https_url = f"https://{url}"
-
-    if https_url:
+    u = urlparse(url)
+    if u.scheme != "https" and u.netloc != "":
+        https_url = f"https://{u.netloc}"
         try:
-            resp = requests.get(https_url, allow_redirects=True, timeout=3, headers=headers)
+            resp = requests.get(https_url, allow_redirects=True, timeout=3, headers=headers, verify=False)
         except Exception:
             return url
         if resp.status_code == 200:
             return https_url
-
     return url
 
 

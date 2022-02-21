@@ -148,7 +148,7 @@ def add_bookmark(request):
 
 
 def delete_bookmark(request):
-    """ Feletes a bookmark """
+    """ Deletes a bookmark """
     if request.method == "POST":
         data = request.POST
         user = request.user
