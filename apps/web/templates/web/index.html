@@ -59,6 +59,8 @@
                     {% if bookmark.title %}
                         <h6 class="card-title"><a href="{{ bookmark.link }}" target="_blank" rel="noopener noreferrer">{{bookmark.title}}</a>
                         <small style="color: rgb(185, 185, 185)"><p class="card-text">{{bookmark.link}}</p></small></h6>
+                    {% else %}
+                        <small style="color: rgb(185, 185, 185)"><p class="card-text"><a href="{{ bookmark.link }}" target="_blank" rel="noopener noreferrer">{{bookmark.link}}</a></p></small></h6>
                     {% endif %}
 
 

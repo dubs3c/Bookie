@@ -17,10 +17,14 @@ def parse_article(url: str) -> Dict:
     :param url: The URL sent by the user
     :return: Dictionary containing HTML data
     """
-    if is_url_blacklisted(url):
-        return {}
-
     data = {"title": "", "description": "", "image": "", "body": ""}
+
+    if not is_url(url):
+        return data
+
+    if is_url_blacklisted(url):
+        return data
+
     try:
         headers = {'user-agent': 'Bookie/app'}
         response = requests.get(https_upgrade(url), timeout=3, headers=headers, verify=False)
@@ -40,7 +44,8 @@ def parse_article(url: str) -> Dict:
     if description:
         data["description"] = description[0]
     if image:
-        data["image"] = https_upgrade(image[0])
+        if is_url(image[0]):
+            data["image"] = https_upgrade(image[0])
     if body:
         data["body"] = body
 
@@ -55,7 +60,7 @@ def is_url(url: str) -> bool:
     """
     try:
         u = urlparse(url)
-    except ValueError:
+    except Exception:
         return False
 
     try:
@@ -92,7 +97,7 @@ def https_upgrade(url: str) -> str:
     """
     headers = {'user-agent': 'Bookie/app'}
     u = urlparse(url)
-    if u.scheme != "https" and u.netloc != "":
+    if u.scheme != "" and u.scheme != "https" and u.netloc != "":
         https_url = f"https://{u.netloc}"
         try:
             resp = requests.get(https_url, allow_redirects=True, timeout=3, headers=headers, verify=False)
