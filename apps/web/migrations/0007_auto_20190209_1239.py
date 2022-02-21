@@ -6,15 +6,15 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('web', '0006_bookmarks_title'),
+        ("web", "0006_bookmarks_title"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='telegram',
-            name='user',
+            model_name="telegram",
+            name="user",
         ),
         migrations.DeleteModel(
-            name='Telegram',
+            name="Telegram",
         ),
     ]

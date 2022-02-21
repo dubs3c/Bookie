@@ -15,7 +15,7 @@ from bookie.celery import app as celery
     retry_kwargs={"max_retries": 2},
 )
 def notify(self, user_id: int):
-    """ Task that notifies a user about bookmarks to read """
+    """Task that notifies a user about bookmarks to read"""
     try:
         user = User.objects.get(id=user_id)
         task = ScheduledTasks.objects.filter(user=user)
@@ -44,7 +44,7 @@ def notify(self, user_id: int):
     retry_kwargs={"max_retries": 2},
 )
 def send_activation_code(self, user_id: int):
-    """ Task that sends an activation code to the users email """
+    """Task that sends an activation code to the users email"""
     try:
         token = ActivationTokens.objects.get(user__id=user_id)
         msg_html = render_to_string(

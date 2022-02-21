@@ -16,7 +16,7 @@ def add_bm_id(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('web', '0007_auto_20190209_1239'),
+        ("web", "0007_auto_20190209_1239"),
     ]
 
     operations = [
@@ -30,5 +30,5 @@ class Migration(migrations.Migration):
             model_name="Bookmarks",
             name="bm_id",
             field=models.CharField(max_length=7, unique=True),
-        )
+        ),
     ]

@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('web', '0002_auto_20190204_2216'),
+        ("web", "0002_auto_20190204_2216"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='bookmarks',
-            name='description',
+            model_name="bookmarks",
+            name="description",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='bookmarks',
-            name='image',
-            field=models.ImageField(blank=True, null=True, upload_to=''),
+            model_name="bookmarks",
+            name="image",
+            field=models.ImageField(blank=True, null=True, upload_to=""),
         ),
     ]

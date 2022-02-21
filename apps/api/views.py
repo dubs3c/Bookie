@@ -21,7 +21,7 @@ LOGGER = logging.getLogger(__name__)
 # Create your views here.
 @csrf_exempt
 def telegram_api(request):
-    """ Add bookmarks via telegram """
+    """Add bookmarks via telegram"""
 
     if request.method == "POST":
         data = json.loads(request.body.decode())
@@ -43,7 +43,10 @@ def telegram_api(request):
                 return HttpResponse(status=200)
 
             if len(cmd) > 2:
-                send_message(chat_id, "Please register with this format: /register token, where token is your token from Bookie")
+                send_message(
+                    chat_id,
+                    "Please register with this format: /register token, where token is your token from Bookie",
+                )
                 return HttpResponse(status=200)
 
             token = cmd[1]
@@ -52,46 +55,68 @@ def telegram_api(request):
                 token_exists = Telegram.objects.get(token=token)
 
                 if token_exists.activated:
-                    send_message(chat_id, "Bookie has already activated your account with this token!")
+                    send_message(
+                        chat_id,
+                        "Bookie has already activated your account with this token!",
+                    )
                     return HttpResponse(status=200)
 
             except ObjectDoesNotExist:
-                send_message(chat_id, "Hmm, looks like that token does not exist. Did you enter it correctly?")
+                send_message(
+                    chat_id,
+                    "Hmm, looks like that token does not exist. Did you enter it correctly?",
+                )
                 return HttpResponse(status=200)
 
             if timezone.now() < (token_exists.created + timedelta(minutes=3)):
                 token_exists.activated = True
                 token_exists.save()
-                result, msg = send_message(chat_id, "Success, your telegram account is now linked to Bookie!")
+                result, msg = send_message(
+                    chat_id, "Success, your telegram account is now linked to Bookie!"
+                )
                 if not result:
-                    LOGGER.error(f"Could not send message to telegram user, status code: {msg}")
-                LOGGER.info(f"User \"{token_exists.user.username}\" activated telegram integration")
+                    LOGGER.error(
+                        f"Could not send message to telegram user, status code: {msg}"
+                    )
+                LOGGER.info(
+                    f'User "{token_exists.user.username}" activated telegram integration'
+                )
                 return HttpResponse(status=201)
 
             token_exists.token = get_random_string(length=5)
             token_exists.save()
-            result, msg = send_message(chat_id, "Your token has expired, a new one has been generted.")
+            result, msg = send_message(
+                chat_id, "Your token has expired, a new one has been generted."
+            )
             if not result:
                 LOGGER.error(f"Could send message to telegram user, status code: {msg}")
-            LOGGER.info(f"User \"{token_exists.user.username}\" failed telegram integration, \
-                        token expired")
+            LOGGER.info(
+                f'User "{token_exists.user.username}" failed telegram integration, \
+                        token expired'
+            )
             return HttpResponse(status=200)
 
         try:
             telegram = Telegram.objects.get(telegram_username=telegram_username)
         except ObjectDoesNotExist:
-            send_message(chat_id, "That Telegram account name does not exist in Bookie, \
-                                   have you entered your username/firstname/lastname correctly?")
+            send_message(
+                chat_id,
+                "That Telegram account name does not exist in Bookie, \
+                                   have you entered your username/firstname/lastname correctly?",
+            )
             return HttpResponse(status=200)
 
         if is_url(content):
             parsed_html = parse_article(content)
             if parsed_html:
-                Bookmarks.objects.create(user=telegram.user, link=content,
-                                         description=parsed_html["description"],
-                                         title=parsed_html["title"],
-                                         image=parsed_html["image"],
-                                         body=parsed_html["body"])
+                Bookmarks.objects.create(
+                    user=telegram.user,
+                    link=content,
+                    description=parsed_html["description"],
+                    title=parsed_html["title"],
+                    image=parsed_html["image"],
+                    body=parsed_html["body"],
+                )
             else:
                 send_message(chat_id, "Sorry, could not add that link :/")
                 return HttpResponse(status=200)

@@ -9,34 +9,57 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0009_alter_user_last_name_max_length'),
-        ('django_celery_beat', '0006_periodictask_priority'),
-        ('web', '0008_auto_20190222_1519'),
+        ("auth", "0009_alter_user_last_name_max_length"),
+        ("django_celery_beat", "0006_periodictask_priority"),
+        ("web", "0008_auto_20190222_1519"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Profile',
+            name="Profile",
             fields=[
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
-                ('timezone', models.CharField(default='UTC', max_length=50)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                ("timezone", models.CharField(default="UTC", max_length=50)),
             ],
             options={
-                'verbose_name': 'user',
-                'verbose_name_plural': 'users',
-                'abstract': False,
+                "verbose_name": "user",
+                "verbose_name_plural": "users",
+                "abstract": False,
             },
-            bases=('auth.user',),
+            bases=("auth.user",),
             managers=[
-                ('objects', django.contrib.auth.models.UserManager()),
+                ("objects", django.contrib.auth.models.UserManager()),
             ],
         ),
         migrations.CreateModel(
-            name='ScheduledTasks',
+            name="ScheduledTasks",
             fields=[
-                ('periodic', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='django_celery_beat.PeriodicTask')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='web.Profile')),
+                (
+                    "periodic",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="django_celery_beat.PeriodicTask",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="web.Profile"
+                    ),
+                ),
             ],
-            bases=('django_celery_beat.periodictask',),
+            bases=("django_celery_beat.periodictask",),
         ),
     ]

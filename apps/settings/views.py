@@ -31,7 +31,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def settings(request):
-    """ Settings index page """
+    """Settings index page"""
     try:
         cron_obj = CrontabScheduleUser.objects.get(user=request.user)
         cron_expression = f"{cron_obj.minute} {cron_obj.hour} {cron_obj.day_of_week} \
@@ -79,7 +79,7 @@ def settings(request):
 
 
 def change_password(request):
-    """ Change user password endpoint """
+    """Change user password endpoint"""
     errors = []
     if request.method == "POST":
         form = ChangePasswordForm(data=request.POST, user=request.user)
@@ -94,7 +94,7 @@ def change_password(request):
 
 
 def integrations(request):
-    """ integrations page """
+    """integrations page"""
     user = request.user
     telegram = Telegram.objects.filter(user=user)
     if telegram:
@@ -105,7 +105,7 @@ def integrations(request):
 
 
 def data_portability(request):
-    """ Export bookmarks """
+    """Export bookmarks"""
 
     if request.method == "POST":
         user = request.user
@@ -163,7 +163,7 @@ def data_portability(request):
 
 
 def integration_detail(request, integration):
-    """ Render the specific integration page """
+    """Render the specific integration page"""
     if not integration.isalpha():
         return HttpResponse("Can't find what you are looking for...", status=404)
     try:
@@ -178,7 +178,7 @@ def integration_detail(request, integration):
 
 
 def integration_telegram(request):
-    """ telegram integration """
+    """telegram integration"""
 
     if request.method == "POST":
         user = request.user
@@ -204,7 +204,7 @@ def integration_telegram(request):
 
 
 def integration_telegram_delete(request):
-    """ Delete the telegram integration """
+    """Delete the telegram integration"""
     user = request.user
     if request.method == "POST":
         telegram = Telegram.objects.filter(user=user)
@@ -215,7 +215,7 @@ def integration_telegram_delete(request):
 
 
 def delete_account(request):
-    """ Delete your account """
+    """Delete your account"""
     if request.method == "POST":
         user = request.user
         User.objects.filter(pk=user.pk).delete()
@@ -229,14 +229,14 @@ def users(request):
     if not request.user.is_superuser:
         raise Http404()
 
-    users = (
-        User.objects.raw('''
+    users = User.objects.raw(
+        """
             SELECT u.id, u.username, count(b.id) as bookmarks, u.is_active, u.is_superuser, u.last_login
             FROM auth_user as u
             LEFT JOIN web_bookmarks as b
             ON b.user_id = u.id
             GROUP BY u.id;
-        ''')
+        """
     )
     return render(request, "settings/users.html", context={"users": users})
 

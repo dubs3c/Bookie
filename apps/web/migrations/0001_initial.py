@@ -15,15 +15,29 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Bookmarks',
+            name="Bookmarks",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('link', models.CharField(max_length=100)),
-                ('image', models.ImageField(null=True, upload_to='')),
-                ('description', models.TextField(null=True)),
-                ('read', models.BooleanField()),
-                ('created', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("link", models.CharField(max_length=100)),
+                ("image", models.ImageField(null=True, upload_to="")),
+                ("description", models.TextField(null=True)),
+                ("read", models.BooleanField()),
+                ("created", models.DateTimeField(auto_now=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

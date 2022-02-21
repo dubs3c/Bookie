@@ -26,7 +26,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def index(request):
-    """ index page """
+    """index page"""
     if request.user.is_authenticated:
         return redirect(reverse("web:dashboard"))
 
@@ -34,7 +34,7 @@ def index(request):
 
 
 def dashboard(request):
-    """ Dashboard page """
+    """Dashboard page"""
     query_param = request.GET.get("filter")
     page_id = request.GET.get("page")
     tag_filter = request.GET.get("tags")
@@ -71,7 +71,7 @@ def dashboard(request):
 
 
 def view_bookmark(request, bookmark_id):
-    """ View a specific bookmark """
+    """View a specific bookmark"""
     bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
     return render(
         request,
@@ -81,13 +81,13 @@ def view_bookmark(request, bookmark_id):
 
 
 def bookmark_iframe(request, bookmark_id):
-    """ View article body in a sandboxed iframe """
+    """View article body in a sandboxed iframe"""
     bookmark = get_object_or_404(Bookmarks, user=request.user, bm_id=bookmark_id)
     return render(request, "web/bookmark_sandbox.html", {"bookmark": bookmark})
 
 
 def add_bookmark_tag(request, bookmark_id):
-    """ Add a tag for a given bookmark """
+    """Add a tag for a given bookmark"""
     if request.method == "POST":
         tag = request.POST.get("tag")
         if len(tag) > 30:
@@ -120,12 +120,12 @@ def add_bookmark_tag(request, bookmark_id):
 
 
 def settings(request):
-    """ Settings page """
+    """Settings page"""
     return render(request, "web/settings.html")
 
 
 def add_bookmark(request):
-    """ Add a link from the dashboard """
+    """Add a link from the dashboard"""
     if request.method == "POST":
         req_data = request.POST
         data = req_data.get("data")
@@ -148,7 +148,7 @@ def add_bookmark(request):
 
 
 def delete_bookmark(request):
-    """ Deletes a bookmark """
+    """Deletes a bookmark"""
     if request.method == "POST":
         data = request.POST
         user = request.user
@@ -163,7 +163,7 @@ def delete_bookmark(request):
 
 
 def mark_read(request):
-    """ Mark a bookmark as read """
+    """Mark a bookmark as read"""
     if request.method == "POST":
         data = request.POST
         user = request.user
@@ -183,7 +183,7 @@ def mark_read(request):
 
 
 def user_login(request):
-    """ Login user """
+    """Login user"""
 
     if request.user.is_authenticated:
         return redirect(reverse("web:dashboard"))
@@ -208,13 +208,13 @@ def user_login(request):
 
 
 def user_logout(request):
-    """ logout user """
+    """logout user"""
     logout(request)
     return redirect(reverse("login"))
 
 
 def register(request):
-    """ Register a new user """
+    """Register a new user"""
     if request.user.is_authenticated:
         return redirect(reverse("web:dashboard"))
 

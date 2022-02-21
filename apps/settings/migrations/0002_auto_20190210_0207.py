@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('settings', '0001_initial'),
+        ("settings", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='telegram',
-            name='activated',
+            model_name="telegram",
+            name="activated",
             field=models.BooleanField(default=False),
         ),
     ]

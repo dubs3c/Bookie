@@ -7,13 +7,13 @@ import uuid
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('web', '0021_auto_20190819_1853'),
+        ("web", "0021_auto_20190819_1853"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='activation_code',
+            model_name="profile",
+            name="activation_code",
             field=models.UUIDField(default=uuid.uuid4),
         ),
     ]

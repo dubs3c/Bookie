@@ -16,7 +16,7 @@ from apps.web.models import Profile
 
 
 class ChangePasswordForm(forms.Form):
-    """ User password change form """
+    """User password change form"""
 
     old_password = forms.CharField(
         label=_("Old password"),
@@ -62,7 +62,7 @@ class ChangePasswordForm(forms.Form):
         super().__init__(*args, **kwargs)
 
     def clean_old_password(self):
-        """ Validates that the old_password field is correct. """
+        """Validates that the old_password field is correct."""
         old_password = self.cleaned_data["old_password"]
         if not self.user.check_password(old_password):
             raise forms.ValidationError(
@@ -71,7 +71,7 @@ class ChangePasswordForm(forms.Form):
         return old_password
 
     def clean_new_password2(self):
-        """ Validate that the new passwords match """
+        """Validate that the new passwords match"""
         oldpw = self.cleaned_data.get("old_password")
         password1 = self.cleaned_data.get("new_password1")
         password2 = self.cleaned_data.get("new_password2")
@@ -82,7 +82,7 @@ class ChangePasswordForm(forms.Form):
         return password2
 
     def save(self, commit=True):
-        """ Save the new password for the user """
+        """Save the new password for the user"""
         if self.cleaned_data.get("new_password2"):
             self.user.set_password(self.cleaned_data.get("new_password2"))
             if commit:
@@ -91,7 +91,7 @@ class ChangePasswordForm(forms.Form):
 
 
 class ProfileForm(ModelForm):
-    """ Profile form """
+    """Profile form"""
 
     error_messages = {
         "incorrect_timezone": ("The timezone you selected is incorrect."),
@@ -112,7 +112,7 @@ class ProfileForm(ModelForm):
         super().__init__(*args, **kwargs)
 
     def clean_timezone(self):
-        """ Validate timezone """
+        """Validate timezone"""
         timezone = self.cleaned_data.get("timezone")
         if timezone not in pytz.all_timezones:
             raise forms.ValidationError(
@@ -121,7 +121,7 @@ class ProfileForm(ModelForm):
         return timezone
 
     def clean_notifications_enabled(self):
-        """ Validate notifications_enabled """
+        """Validate notifications_enabled"""
         enabled = self.cleaned_data.get("notifications_enabled")
         if type(enabled) is not bool:
             raise forms.ValidationError(
@@ -131,7 +131,7 @@ class ProfileForm(ModelForm):
         return enabled
 
     def save(self, commit=True):
-        """ save """
+        """save"""
         enabled = self.cleaned_data.get("notifications_enabled")
         timezone = self.cleaned_data.get("timezone")
 
@@ -146,7 +146,7 @@ class ProfileForm(ModelForm):
 
 
 class CronForm(forms.Form):
-    """ Construct the form for cron expressions """
+    """Construct the form for cron expressions"""
 
     cron = forms.CharField(max_length=13, label="Cron", widget=forms.HiddenInput())
 
@@ -160,7 +160,7 @@ class CronForm(forms.Form):
         super().__init__(*args, **kwargs)
 
     def clean_cron(self):
-        """ Validate the cron expression """
+        """Validate the cron expression"""
 
         cron = self.cleaned_data.get("cron")
         # TODO - Improve regex to make sure cron expression is correct
@@ -181,7 +181,7 @@ class CronForm(forms.Form):
         return cron
 
     def save(self, commit=True):
-        """ Save the new password for the user """
+        """Save the new password for the user"""
         cron = self.cleaned_data.get("cron")
         if cron:
             cron_list = cron.split(" ")

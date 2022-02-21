@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('web', '0009_profile_scheduledtasks'),
+        ("web", "0009_profile_scheduledtasks"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='profile',
-            name='notifications_enabled',
+            model_name="profile",
+            name="notifications_enabled",
             field=models.BooleanField(default=False),
         ),
     ]

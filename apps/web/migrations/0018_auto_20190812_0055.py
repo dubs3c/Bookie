@@ -6,22 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('web', '0017_bookmarktags'),
+        ("web", "0017_bookmarktags"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='bookmarktags',
-            name='bookmark_id',
+            model_name="bookmarktags",
+            name="bookmark_id",
         ),
         migrations.AddField(
-            model_name='bookmarks',
-            name='tags',
-            field=models.ManyToManyField(to='web.BookmarkTags'),
+            model_name="bookmarks",
+            name="tags",
+            field=models.ManyToManyField(to="web.BookmarkTags"),
         ),
         migrations.AddField(
-            model_name='bookmarktags',
-            name='created',
+            model_name="bookmarktags",
+            name="created",
             field=models.DateTimeField(auto_now=True),
         ),
     ]

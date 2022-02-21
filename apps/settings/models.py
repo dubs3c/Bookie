@@ -6,7 +6,8 @@ from django.utils.crypto import get_random_string
 
 
 class Telegram(models.Model):
-    """ Telegram usernames connected to bookie users """
+    """Telegram usernames connected to bookie users"""
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     telegram_username = models.CharField(max_length=50, unique=True)
     token = models.CharField(max_length=30)

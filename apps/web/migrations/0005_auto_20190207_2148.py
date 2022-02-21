@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('web', '0004_telegram'),
+        ("web", "0004_telegram"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='bookmarks',
-            name='image',
+            model_name="bookmarks",
+            name="image",
             field=models.CharField(blank=True, max_length=200, null=True),
         ),
         migrations.AlterField(
-            model_name='bookmarks',
-            name='read',
+            model_name="bookmarks",
+            name="read",
             field=models.BooleanField(default=False),
         ),
     ]
