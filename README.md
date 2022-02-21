@@ -25,33 +25,7 @@ My vision for Bookie includes:
 
 ## Local Development
 
-If you want to add features to Bookie, you have a few options to run it locally:
-1. Docker
-2. Docker in Vagrant
-3. Vagrant
-4. Native
-
-I personally use option 2 because I am using Windows and I have Virtualbox installed which doesn't play nice with docker :/
-
-When running locally, the telegram integration wont work out of the box, you will need to register your own bot and use something like https://ngrok.com/. But this isn't necessary unless you are specifically developing features using telegram. Therefore Bookie will just set the telegram token to `123` unless otherwise specified.
-
-Use the guideline below to start developing locally with vagrant and docker. If you don't want to use vagrant, simply skip the vagrant part and run `docker-compose`.
-```
-$ vagrant up
-$ vagrant ssh
-vagrant@ubuntu-xenial:~$ cd /vagrant_data
-vagrant@ubuntu-xenial:/vagrant_data$ sudo docker-compose -f dev.yml up -d  
-```
-
-Now your local Bookie instance should be available on `http://localhost:8000` on your host machine.
-
-### Running tests locally
-
-Tests should be run using Django, like below:
-
-```
-python manage.py test --settings=bookie.env.test
-```
+Want to hack on bookie locally? Just clone the repo and run `docker-compose -f dev.yml up -d` and you're good to go :) For more information, check out the [documentation](docs/README.md).
 
 ## Contributing
 Any feedback or ideas are welcome! Want to improve something? Create a pull request!

@@ -14,9 +14,9 @@ Bookie is designed to use docker for running in production while the vagrant and
 ### Default setup
 
 1. Clone the repo
-2. `pip install pipenv --user`
-3. `pipenv shell`
-4. `pipenv install`
+2. `python3.10 -m venv venv`
+3. `source venv/bin/activate`
+4. `pip install -r requirements.txt`
 5. Set your telegram api key
 ```
 # Windows
@@ -25,7 +25,8 @@ set TELEGRAM_API_KEY=<api_key>
 # Unix
 export TELEGRAM_API_KEY=<api_key>
 ```
-6. `python manage.py runserver --settings=bookie.env.dev` *(Run bookie in development mode)*
+6. `docker-compose -f dev.yml up -d` *(Run bookie in development mode)*
+7. Visit localhost:8000
 
 ### Vagrant setup
 
@@ -37,7 +38,7 @@ export TELEGRAM_API_KEY=<api_key>
 3. cd /vagrant_data
 4. Run Boookie
 ```
-python3.7 manage.py runserver --settings=bookie.env.dev 0.0.0.0:8000
+python3.10 manage.py runserver --settings=bookie.env.dev 0.0.0.0:8000
 ```
 5. Visit http://127.0.0.1:8000 on your host machine     
 
@@ -105,3 +106,10 @@ server {
 }                                                                                                                       
 
 ```
+
+### Running tests locally
+
+Tests should be run using Django, like so:
+
+```
+python manage.py test --settings=bookie.env.test
