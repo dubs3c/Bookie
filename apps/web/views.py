@@ -203,7 +203,7 @@ def user_login(request):
         else:
             data = {"error": "Wrong username/password or account is not activated"}
             return render(request, "registration/login.html", context=data)
-    if request.method == "GET":
+    if request.method == "GET" or request.method == "HEAD":
         return render(request, "registration/login.html")
 
 
