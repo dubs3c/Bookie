@@ -8,6 +8,7 @@ from bookie.settings import *
 SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 ALLOWED_DOMAINS = os.environ["ALLOWED_DOMAINS"].split(",")
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 SENTRY_KEY = os.environ.get("SENTRY_KEY", "")
 
