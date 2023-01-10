@@ -28,7 +28,7 @@
             <td>{% if user.bookmarks == null %}0{% else %} {{user.bookmarks}}{% endif %}</td>
             <td>{{user.is_superuser}}</td>
             <td>{{user.last_login}}</td>
-            <td><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteUserModal" data-username="{{user.user__username}}" data-userid="{{user.user__id}}">Delete</button> <button type="button" class="btn btn-warning btn-sm" onclick="deactivateUser('{{user.user__id}}')">Deactivate</button></td>
+            <td><button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteUserModal" data-username="{{user.username}}" data-userid="{{user.id}}">Delete</button> <button type="button" class="btn btn-warning btn-sm" onclick="deactivateUser('{{user.id}}')">Deactivate</button></td>
         </tr>
     {% endfor %}
     </tbody>

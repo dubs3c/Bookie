@@ -49,7 +49,7 @@ class Bookmarks(models.Model):
     bm_id = models.CharField(max_length=7, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     link = models.TextField()
-    image = models.CharField(max_length=200, blank=True, null=True)
+    image = models.TextField(blank=True, null=True)
     title = models.CharField(max_length=200, blank=True, null=True)
     description = models.TextField(null=True, blank=True)
     body = models.TextField(null=True, blank=True)

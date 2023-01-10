@@ -246,6 +246,7 @@ def delete_user(request, user_id):
     if not request.user.is_superuser:
         raise Http404()
     if request.method == "POST":
+        # todo: change this lol
         user = get_object_or_404(User, id=user_id)
         user.delete()
         return HttpResponse(status=200)
@@ -257,6 +258,7 @@ def deactivate_user(request, user_id):
     if not request.user.is_superuser:
         raise Http404()
     if request.method == "POST":
+        # todo: change this lol
         user = get_object_or_404(User, id=user_id)
         user.is_active = False
         user.save()
