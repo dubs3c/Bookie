@@ -8,7 +8,7 @@ certifi==2022.12.7
 cffi==1.15.0
 chardet==4.0.0
 cssselect==1.0.3
-Django==3.2.16
+Django==3.2.17
 django-celery-beat==2.2.1
 django-timezone-field==4.2.3
 fabric==2.4.0
