@@ -21,3 +21,8 @@ class Telegram(models.Model):
             return super().save(*args, **kwargs)
         else:
             return super().save(*args, **kwargs)
+
+
+class Site(models.Model):
+    """ Site Settings """
+    allow_registration = models.BooleanField(default=True)

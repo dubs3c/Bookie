@@ -11,6 +11,8 @@ from django.utils.translation import gettext_lazy as _
 
 from django_celery_beat.models import PeriodicTasks
 
+from .models import Site
+
 from apps.web.models import CrontabScheduleUser, ScheduledTasks
 from apps.web.models import Profile
 
@@ -88,6 +90,38 @@ class ChangePasswordForm(forms.Form):
             if commit:
                 self.user.save()
         return self.user
+
+class SiteSettingsForm(ModelForm):
+
+    error_messages = {
+        "incorrect_type": ("The option you selected is not valid"),
+    }
+
+    class Meta:
+        model = Site
+        fields = ["allow_registration"]
+
+    def clean_allow_registration(self):
+        allow = self.cleaned_data.get("allow_registration")
+        if not isinstance(allow, bool):
+            raise forms.ValidationError(
+                self.error_messages["incorrect_type"],
+                code="incorrect_type",
+            )
+        return allow
+
+    def save(self, commit=True):
+        """save"""
+        allow = self.cleaned_data.get("allow_registration")
+
+        # meh
+        s = Site.objects.all().first()
+        if s is None:
+            Site.objects.create(allow_registration=allow)
+        else:
+            s.allow_registration = allow
+            s.save()
+        return allow
 
 
 class ProfileForm(ModelForm):

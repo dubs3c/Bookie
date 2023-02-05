@@ -7,7 +7,7 @@ import logging
 import pytz
 import csv
 
-from django.http import Http404
+from django.http import Http404, HttpResponseBadRequest
 from django.utils.crypto import get_random_string
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
 from django.template.loader import get_template
@@ -23,8 +23,8 @@ from django.utils import timezone
 from django.shortcuts import redirect
 
 from apps.web.models import CrontabScheduleUser, Bookmarks
-from .forms import ChangePasswordForm, CronForm, ProfileForm
-from .models import Telegram
+from .forms import ChangePasswordForm, CronForm, ProfileForm, SiteSettingsForm
+from .models import Telegram, Site
 
 
 LOGGER = logging.getLogger(__name__)
@@ -271,4 +271,20 @@ def site(request):
     if not request.user.is_superuser:
         raise Http404()
 
-    return render(request, "settings/site.html", context={})
+    errors = []
+
+    if request.method == "GET":
+        s = Site.objects.all().first()
+        data = {"allow_registration": s.allow_registration}
+        site_form = SiteSettingsForm(data)
+
+    if request.method == "POST":
+        site_form = SiteSettingsForm(data=request.POST)
+
+        if site_form.is_valid():
+            site_form.save()
+            messages.success(request, "Site settings has been successfully updated")
+        else:
+            errors.append(site_form.errors)
+
+    return render(request, "settings/site.html", context={ "form": site_form, "formerrors": errors})

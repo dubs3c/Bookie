@@ -4,5 +4,13 @@
 
 <h3>Site settings</h3>
 
+<form action="{% url 'settings:site' %}" method="post">
+    {% csrf_token  %}
+
+    <p>Allow registration: {{form.allow_registration}}</p>
+    <small>{{form.errors}}</small>
+    <input type="submit" name="submit" class="btn btn-primary" value="Save Settings">
+</form>
+
 
 {% endblock %}

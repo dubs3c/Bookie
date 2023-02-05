@@ -21,6 +21,8 @@ from .models import Bookmarks, BookmarkTags, ActivationTokens
 from .tasks import send_activation_code
 from utils.web import is_url, parse_article, is_valid_uuid
 
+from apps.settings.models import Site
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -215,6 +217,11 @@ def user_logout(request):
 
 def register(request):
     """Register a new user"""
+    allowed = Site.objects.all().first().allow_registration
+
+    if not allowed:
+        return redirect(reverse("login"))
+
     if request.user.is_authenticated:
         return redirect(reverse("web:dashboard"))
 
