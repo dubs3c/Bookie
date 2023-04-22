@@ -1,13 +1,12 @@
 """ web utils """
 import ipaddress
 from typing import Dict
-import re
+from urllib.parse import urlparse
 from lxml import html
 
 import requests
 from requests.exceptions import Timeout
 from readability import Document
-from urllib.parse import urlparse
 from uuid import UUID
 
 
