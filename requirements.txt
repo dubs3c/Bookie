@@ -68,7 +68,7 @@ toml==0.10.2
 tomli==2.0.1
 tornado==6.3.2
 tqdm==4.65.0
-urllib3==2.0.2
+urllib3==2.0.6
 vine==5.0.0
 virtualenv==20.23.0
 wcwidth==0.2.6
