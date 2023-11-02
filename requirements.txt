@@ -19,7 +19,7 @@ click-repl==0.2.0
 cryptography==40.0.2
 cssselect==1.0.3
 distlib==0.3.6
-Django==3.2.19
+Django==3.2.23
 django-celery-beat==2.2.1
 django-timezone-field==4.2.3
 fabric==2.4.0
