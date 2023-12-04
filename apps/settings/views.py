@@ -149,14 +149,14 @@ def data_portability(request):
         for key, bm in merged.items():
             writer.writerow(
                 [
-                    base64.b64encode(bm.get("title")),
+                    base64.b64encode(bm.get("title").encode()).decode() if bm.get("title") else "",
                     bm.get("link"),
                     bm.get("image"),
-                    base64.b64encode(bm.get("description")),
+                    base64.b64encode(bm.get("description").encode()).decode() if bm.get("description") else "",
                     bm.get("read"),
                     bm.get("created"),
                     bm.get("tags__name"),
-                    base64.b64encode(bm.get("body")),
+                    base64.b64encode(bm.get("body").encode()).decode() if bm.get("body") else "",
                 ]
             )
         return response
