@@ -6,6 +6,7 @@ from datetime import timedelta
 import logging
 import pytz
 import csv
+import base64
 
 from django.http import Http404, HttpResponseBadRequest
 from django.utils.crypto import get_random_string
@@ -148,14 +149,14 @@ def data_portability(request):
         for key, bm in merged.items():
             writer.writerow(
                 [
-                    bm.get("title"),
+                    base64.b64encode(bm.get("title")),
                     bm.get("link"),
                     bm.get("image"),
-                    bm.get("description"),
+                    base64.b64encode(bm.get("description")),
                     bm.get("read"),
                     bm.get("created"),
                     bm.get("tags__name"),
-                    bm.get("body"),
+                    base64.b64encode(bm.get("body")),
                 ]
             )
         return response
