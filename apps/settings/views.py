@@ -126,7 +126,7 @@ def data_portability(request):
             'description': bookmark.description,
             'read': bookmark.read,
             'created': bookmark.created,
-            'tags': [tag.name for tag in bookmark.tags.all()],
+            'tags': ",".join([tag.name for tag in bookmark.tags.all()]),
             'body': bookmark.body,
         } for bookmark in bookmarks]
 
@@ -145,7 +145,7 @@ def data_portability(request):
                     base64.b64encode(bm.get("description").encode()).decode() if bm.get("description") else "",
                     bm.get("read"),
                     bm.get("created"),
-                    bm.get("tags__name"),
+                    bm.get("tags"),
                     base64.b64encode(bm.get("body").encode()).decode() if bm.get("body") else "",
                 ]
             )
