@@ -8,6 +8,7 @@ import pytz
 import csv
 import base64
 
+from django.db.models import Prefetch
 from django.http import Http404, HttpResponseBadRequest
 from django.utils.crypto import get_random_string
 from django.template.exceptions import TemplateDoesNotExist, TemplateSyntaxError
@@ -23,7 +24,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.shortcuts import redirect
 
-from apps.web.models import CrontabScheduleUser, Bookmarks
+from apps.web.models import CrontabScheduleUser, Bookmarks, BookmarkTags
 from .forms import ChangePasswordForm, CronForm, ProfileForm, SiteSettingsForm
 from .models import Telegram, Site
 
@@ -110,35 +111,24 @@ def data_portability(request):
 
     if request.method == "POST":
         user = request.user
+        tags_prefetch = Prefetch('tags', queryset=BookmarkTags.objects.all())
         bookmarks = (
             Bookmarks.objects.filter(user=user)
-            .values(
-                "bm_id",
-                "title",
-                "link",
-                "image",
-                "description",
-                "read",
-                "created",
-                "tags__name",
-                "body",
-            )
-            .order_by("-id")
+            .prefetch_related(tags_prefetch)
+            .order_by('-id')
         )
 
-        merged = {}
-        if bookmarks:
-            # The bookmarks object will contain duplicates because of the many2many field on tags.
-            # Items needs to be merged.
-            for item in bookmarks:
-                if not item["bm_id"] in merged.keys():
-                    merged[item["bm_id"]] = item
-                else:
-                    tags = item["tags__name"]
-                    x = merged[item["bm_id"]]
-                    if tags and x["tags__name"]:
-                        x["tags__name"] += f", {tags}"
-                        merged[item["bm_id"]] = x
+        bookmarks_list = [{
+            'bm_id': bookmark.bm_id,
+            'title': bookmark.title,
+            'link': bookmark.link,
+            'image': bookmark.image,
+            'description': bookmark.description,
+            'read': bookmark.read,
+            'created': bookmark.created,
+            'tags': ",".join([tag.name for tag in bookmark.tags.all()]),
+            'body': bookmark.body,
+        } for bookmark in bookmarks]
 
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = 'attachment; filename="bookie_output.csv"'
@@ -146,7 +136,7 @@ def data_portability(request):
         writer.writerow(
             ["Title", "Link", "Image", "Description", "Read", "Created", "Tags", "Body"]
         )
-        for key, bm in merged.items():
+        for bm in bookmarks_list:
             writer.writerow(
                 [
                     base64.b64encode(bm.get("title").encode()).decode() if bm.get("title") else "",
@@ -155,7 +145,7 @@ def data_portability(request):
                     base64.b64encode(bm.get("description").encode()).decode() if bm.get("description") else "",
                     bm.get("read"),
                     bm.get("created"),
-                    bm.get("tags__name"),
+                    bm.get("tags"),
                     base64.b64encode(bm.get("body").encode()).decode() if bm.get("body") else "",
                 ]
             )
